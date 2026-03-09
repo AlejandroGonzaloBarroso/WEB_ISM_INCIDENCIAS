@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISM Incidents Dashboard</title>
+    <link rel="stylesheet" href="Estilos-CSS/style.css">
+    <link rel="stylesheet" href="Estilos-CSS/admin.css">
+</head>
+
+<body class="admin-body">
+    <header class="app-header">
+        <div class="logo-container">
+            <img src="Imagenes/Logotipo-ISM-azul.png" alt="ISM Logo" class="header-logo">
+        </div>
+
+        <h1 class="header-title">Incidents Admin Dashboard</h1>
+
+        <div class="header-actions">
+            <!-- Link back to public form -->
+            <a href="index.html" class="btn-theme" style="text-decoration: none; font-size: 0.9rem;"
+                aria-label="Go to Form">🏠 Form</a>
+        </div>
+    </header>
+
+    <main class="admin-content">
+        <div class="dashboard-header">
+            <h2>Reported Incidents</h2>
+            <div id="loadingIndicator" class="loading-spinner">
+                <p>Loading records...</p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="incidents-table">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Department</th>
+                        <th>Classroom / Location</th>
+                        <th>Description</th>
+                        <th>Photo</th>
+                    </tr>
+                </thead>
+                <tbody id="incidentsTableBody">
+                    <!-- Data will be injected here by admin.js -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modal for viewing full images -->
+    <div id="imageModal" class="modal hidden">
+        <div class="modal-content image-modal-content">
+            <span class="close-btn" id="closeImageModal">&times;</span>
+            <img id="fullSizeImage" src="" alt="Incident Photo Full Size" class="full-size-image">
+        </div>
+    </div>
+
+    <!-- Alert System -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- Module script for Firebase -->
+    <script type="module" src="JavaScript-JavaScript/admin.js"></script>
+</body>
+
+</html>

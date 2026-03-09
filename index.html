@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="appTitle">ISM School Incidents</title>
+    <link rel="stylesheet" href="Estilos-CSS/style.css">
+</head>
+
+<body>
+    <header class="app-header">
+        <div class="logo-container">
+            <img src="Imagenes/Logotipo-ISM-azul.png" alt="ISM Logo" class="header-logo">
+        </div>
+
+        <h1 class="header-title" data-i18n="headerTitle">Incident Reporting System</h1>
+
+        <div class="header-actions">
+            <button id="themeToggle" class="btn-theme" aria-label="Toggle Theme">DARK</button>
+            <button id="langToggle" class="btn-lang">ES</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="categories-grid">
+            <article class="category-card primary-card">
+                <div class="card-icon">📚</div>
+                <h2 data-i18n="primaryTitle">Primary School</h2>
+                <p data-i18n="primaryDesc">Report incidents related to the Primary School department.</p>
+                <button class="btn-primary" data-i18n="btnReport">Report Incident</button>
+            </article>
+
+            <article class="category-card middle-card">
+                <div class="card-icon">🏫</div>
+                <h2 data-i18n="middleTitle">Middle School</h2>
+                <p data-i18n="middleDesc">Report incidents related to the Middle School department.</p>
+                <button class="btn-primary" data-i18n="btnReport">Report Incident</button>
+            </article>
+
+            <article class="category-card secondary-card">
+                <div class="card-icon">🎓</div>
+                <h2 data-i18n="secondaryTitle">Secondary School</h2>
+                <p data-i18n="secondaryDesc">Report incidents related to the Secondary School department.</p>
+                <button class="btn-primary" data-i18n="btnReport">Report Incident</button>
+            </article>
+        </section>
+    </main>
+
+    <!-- Modal for Reporting Incident -->
+    <div id="incidentModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modalTitle" data-i18n="modalReportTitle">Report Incident</h2>
+            <form id="incidentForm">
+                <div class="form-group">
+                    <label for="incidentCategory" data-i18n="modalCategoryLabel">School Department</label>
+                    <input type="text" id="incidentCategory" readonly
+                        style="background-color: var(--bg-color); color: var(--text-secondary); cursor: not-allowed; font-weight: bold;">
+                </div>
+
+                <div class="form-group">
+                    <label for="incidentClassroom" data-i18n="modalClassroomLabel">Classroom / Location</label>
+                    <input type="text" id="incidentClassroom" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="incidentDesc" data-i18n="modalDescLabel">Description</label>
+                    <textarea id="incidentDesc" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="incidentImage" data-i18n="modalImageLabel">Photo (Optional)</label>
+                    <input type="file" id="incidentImage" accept="image/*">
+                </div>
+
+                <div id="loadingIndicator" class="hidden">
+                    <p data-i18n="modalLoading">Sending...</p>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn" data-i18n="modalSubmitBtn">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Audit performed by Alejandro Gonzalo -->
+
+    <!-- Load App script as a module so we can use modern Firebase imports -->
+    <script type="module" src="JavaScript-JavaScript/app.js"></script>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
+</body>
+
+</html>

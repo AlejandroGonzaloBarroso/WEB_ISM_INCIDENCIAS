@@ -83,37 +83,7 @@ body {
     z-index: 1;
 }
 
-/* Interactive Background Spotlight Effect */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: radial-gradient(var(--dot-color) 2px, transparent 2px);
-    background-size: var(--bg-size, 25px) var(--bg-size, 25px);
-    /* Configurable via JS */
-    background-position: calc(var(--mouse-x, 50vw) - (var(--bg-size, 25px) / 2)) calc(var(--mouse-y, 50vh) - (var(--bg-size, 25px) / 2));
-    pointer-events: none;
-    z-index: -1;
-    transition: background-size 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
 
-/* Apply the dynamic spotlight ONLY on computers (screens with a precise mouse) */
-@media (hover: hover) and (pointer: fine) {
-    body::before {
-        /* Mask creates a 350px circular spotlight around the mouse coordinates */
-        mask-image: radial-gradient(circle 350px at var(--mouse-x, 50vw) var(--mouse-y, 50vh), black 0%, transparent 100%);
-        -webkit-mask-image: radial-gradient(circle 350px at var(--mouse-x, 50vw) var(--mouse-y, 50vh), black 0%, transparent 100%);
-    }
-
-    /* Magnetic pull effect when clicking */
-    body.is-clicking::before {
-        --bg-size: 8px;
-        /* Dots contract drastically */
-    }
-}
 
 /* Header (Solid) */
 .app-header {
@@ -470,8 +440,10 @@ body::before {
 
 .form-group textarea,
 .form-group input[type="text"],
+.form-group select,
 textarea,
-input[type="file"] {
+input[type="file"],
+select {
     width: 100%;
     max-width: 100%;
     /* Prevent horizontal overflow */
@@ -497,16 +469,26 @@ textarea {
 /* Dark mode specific input styling */
 html.dark-mode .form-group textarea,
 html.dark-mode .form-group input[type="text"],
+html.dark-mode .form-group select,
 html.dark-mode textarea,
-html.dark-mode input[type="file"] {
+html.dark-mode input[type="file"],
+html.dark-mode select {
     background-color: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
+/* Fix option dropdown appearance in dark mode */
+html.dark-mode select option {
+    background-color: var(--card-bg); /* Use solid dark background to cover white default */
+    color: var(--text-primary); /* Use white text */
+}
+
 input[type="text"]:focus,
 textarea:focus,
-input[type="file"]:focus {
+input[type="file"]:focus,
+select:focus,
+input[type="text"][readonly] {
     outline: none;
     border-color: var(--primary-color);
     background-color: var(--card-bg);
@@ -514,25 +496,41 @@ input[type="file"]:focus {
     transform: translateY(-2px);
 }
 
+/* Specific styling for readonly to disable clicking and make it stand out */
+input[type="text"][readonly] {
+    pointer-events: none;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
 html.dark-mode input[type="text"]:focus,
 html.dark-mode textarea:focus,
-html.dark-mode input[type="file"]:focus {
+html.dark-mode input[type="file"]:focus,
+html.dark-mode select:focus,
+html.dark-mode input[type="text"][readonly] {
     background-color: rgba(255, 255, 255, 0.08);
     border-color: var(--primary-hover);
     box-shadow: 0 0 0 4px rgba(174, 203, 245, 0.15), inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+/* Dark mode text color override for readonly */
+html.dark-mode input[type="text"][readonly] {
+    color: var(--primary-hover);
+}
+
 /* Hover effects for inputs */
 input[type="text"]:hover:not([readonly]),
 textarea:hover,
-input[type="file"]:hover {
+input[type="file"]:hover,
+select:hover:not([readonly]) {
     border-color: var(--primary-color);
     background-color: var(--card-bg);
 }
 
 html.dark-mode input[type="text"]:hover:not([readonly]),
 html.dark-mode textarea:hover,
-html.dark-mode input[type="file"]:hover {
+html.dark-mode input[type="file"]:hover,
+html.dark-mode select:hover:not([readonly]) {
     background-color: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.2);
 }

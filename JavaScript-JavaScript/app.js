@@ -25,20 +25,94 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLang = 'en'; // Set default language to English
     let dictionary = null;
 
-    // Interactive Background Spotlight (Modern Effect)
-    document.addEventListener('mousemove', (e) => {
-        document.body.style.setProperty('--mouse-x', `${e.clientX}px`);
-        document.body.style.setProperty('--mouse-y', `${e.clientY}px`);
-    });
+    // Interactive Canvas Matrix Spotlight
+    const canvas = document.getElementById('pointMatrix');
+    let ctx, width, height;
 
-    // Magnetic pull effect on click
-    document.addEventListener('mousedown', () => {
-        document.body.classList.add('is-clicking');
-    });
+    // Smooth trailing variables
+    let targetMouseX = window.innerWidth / 2;
+    let targetMouseY = window.innerHeight / 2;
+    let currentMouseX = window.innerWidth / 2;
+    let currentMouseY = window.innerHeight / 2;
 
-    document.addEventListener('mouseup', () => {
-        document.body.classList.remove('is-clicking');
-    });
+    let targetPull = 1;
+    let currentPull = 1;
+
+    // Time for wave animation
+    let time = 0;
+
+    if (canvas) {
+        ctx = canvas.getContext('2d');
+        const resizeCanvas = () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            targetMouseX = width / 2;
+            targetMouseY = height / 2;
+        };
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        document.addEventListener('mousemove', (e) => {
+            targetMouseX = e.clientX;
+            targetMouseY = e.clientY;
+        });
+
+        document.addEventListener('mousedown', () => targetPull = 0.2); // Group closer and tighter
+        document.addEventListener('mouseup', () => targetPull = 1);   // Release
+
+        const radius = 180;     // The size of the circular mask (slightly larger)
+        const dotSpacing = 30;  // Gap between dots
+
+        function animateMatrix() {
+            ctx.clearRect(0, 0, width, height);
+
+            time += 0.05;
+
+            // 1. Smoothly follow the mouse (Trailing effect)
+            // Easing factor: lower is smoother/slower, higher is faster/snappier
+            currentMouseX += (targetMouseX - currentMouseX) * 0.08;
+            currentMouseY += (targetMouseY - currentMouseY) * 0.08;
+
+            // 2. Smooth interpolation for the click pull effect
+            currentPull += (targetPull - currentPull) * 0.15;
+
+            // Determine if dark mode is active to color dots accordingly
+            const isDark = document.documentElement.classList.contains('dark-mode');
+            // Use the primary ISM colors for the matrix instead of grayscales
+            ctx.fillStyle = isDark ? 'rgba(174, 203, 245, 0.7)' : 'rgba(26, 75, 140, 0.6)';
+
+            // Draw grid relative to trailing pointer and restricted to a circle
+            for (let x = -radius; x <= radius; x += dotSpacing) {
+                for (let y = -radius; y <= radius; y += dotSpacing) {
+                    // Check if dot is inside the circle mask
+                    if (x * x + y * y <= radius * radius) {
+
+                        // Add a subtle wave animation to each dot based on its physical position and time
+                        const waveX = Math.sin(time + y * 0.05) * 3;
+                        const waveY = Math.cos(time + x * 0.05) * 3;
+
+                        // Calculate final draw positions pulling towards the center based on `currentPull`
+                        const drawX = currentMouseX + (x * currentPull) + waveX;
+                        const drawY = currentMouseY + (y * currentPull) + waveY;
+
+                        // Calculate distance from center to fade out the edges smoothly
+                        const dist = Math.sqrt(x * x + y * y);
+                        const opacityRatio = 1 - (dist / radius); // 1 at center, 0 at edge
+
+                        // Add a slight glowing effect dependent on how close to center
+                        ctx.globalAlpha = opacityRatio;
+                        ctx.beginPath();
+                        // Slightly larger dots to make the color pop more
+                        ctx.arc(drawX, drawY, isDark ? 2.2 : 2.0, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+            ctx.globalAlpha = 1.0; // Reset alpha
+            requestAnimationFrame(animateMatrix);
+        }
+        animateMatrix();
+    }
 
     // Fetch the JSON dictionary
     async function loadDictionary() {
@@ -125,12 +199,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingIndicator = document.getElementById('loadingIndicator');
     const submitBtn = document.getElementById('submitBtn');
 
+    // Cooldown duration in milliseconds (5 minutes = 5 * 60 * 1000)
+    const COOLDOWN_TIME_MS = 5 * 60 * 1000;
+
+    // Check if user is in cooldown
+    function checkCooldown() {
+        const lastTime = localStorage.getItem('lastIncidentTime');
+        if (!lastTime) return null; // No cooldown active
+
+        const now = Date.now();
+        const diff = now - parseInt(lastTime, 10);
+
+        if (diff < COOLDOWN_TIME_MS) {
+            return COOLDOWN_TIME_MS - diff; // Return remaining milliseconds
+        }
+
+        // Cooldown expired, clear it
+        localStorage.removeItem('lastIncidentTime');
+        return null;
+    }
+
     // Open modal when any "Report Incident" button is clicked
     reportButtons.forEach(btn => {
         // Skip the submit button inside the modal
         if (btn.id === 'submitBtn') return;
 
         btn.addEventListener('click', (e) => {
+            // First check if the device is on cooldown
+            const remainingTime = checkCooldown();
+
+            if (remainingTime) {
+                // Calculate minutes and seconds
+                const minutes = Math.floor(remainingTime / 60000);
+                const seconds = ((remainingTime % 60000) / 1000).toFixed(0);
+                const timeString = minutes > 0
+                    ? `${minutes} min ${seconds} sec`
+                    : `${seconds} sec`;
+
+                // Show translated error message with time
+                let cooldownMsg = dictionary[currentLang]['msgCooldown'];
+                cooldownMsg = cooldownMsg.replace('{time}', timeString);
+
+                showToast(cooldownMsg, 'error');
+                return; // Stop here, do not open modal
+            }
+
             // Find which category this button belongs to
             const card = e.target.closest('.category-card');
             let category = "Unknown";
@@ -156,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const description = document.getElementById('incidentDesc').value;
         const classroom = document.getElementById('incidentClassroom').value;
+        const urgency = document.getElementById('incidentUrgency').value;
         const fileInput = document.getElementById('incidentImage');
         const category = categoryInput.value;
         let imageUrl = null;
@@ -191,10 +305,15 @@ document.addEventListener('DOMContentLoaded', () => {
             await addDoc(collection(db, "incidencias"), {
                 category: category,
                 classroom: classroom,
+                urgency: urgency,
                 description: description,
                 imageUrl: imageUrl, // Will be null if no image was uploaded
+                status: 'Sin revisar', // Default status for new incidents
                 timestamp: serverTimestamp()
             });
+
+            // Start 5-minute cooldown timer for this device
+            localStorage.setItem('lastIncidentTime', Date.now().toString());
 
             // Success
             showToast(dictionary[currentLang]['msgSuccess']);

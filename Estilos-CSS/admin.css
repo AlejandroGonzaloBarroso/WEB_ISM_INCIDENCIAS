@@ -121,3 +121,138 @@ html.dark-mode .incidents-table tr:hover {
     color: var(--text-secondary);
     animation: pulse 1.5s infinite ease-in-out;
 }
+
+/* Superadmin Form Layout */
+.admin-manage-form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    background: var(--bg-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.admin-form-group-email {
+    flex: 2;
+    /* Give email input more width than permissions */
+}
+
+.admin-form-group-perms {
+    flex: 1;
+}
+
+/* Responsive Design for Admin Dashboard & Modals */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .dashboard-header>div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Stack the Admin Form Fields */
+    .admin-manage-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-manage-form>button {
+        align-self: stretch !important;
+        margin-top: 10px;
+    }
+
+    /* Adjust checkbox wrapping */
+    .admin-form-group-perms>div {
+        flex-wrap: wrap;
+    }
+
+    /* Modals should use full screen width */
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 1rem;
+    }
+
+    /* Comments Modal specific adjustments */
+    #commentsModal .modal-content {
+        height: 90vh;
+        margin: 5% auto;
+    }
+
+    /* Make table rows stackable or scrollable smoothly */
+    .table-responsive {
+        border-radius: 8px;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+        overflow-x: hidden;
+    }
+
+    .incidents-table {
+        display: block;
+    }
+
+    .incidents-table thead {
+        display: none;
+        /* Hide headers on mobile */
+    }
+
+    .incidents-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .incidents-table tr {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        margin-bottom: 1rem;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    html.dark-mode .incidents-table tr:hover {
+        background-color: var(--card-bg);
+        /* No hover on cards */
+    }
+
+    .incidents-table td {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.75rem 0;
+        text-align: left;
+        font-size: 0.95rem;
+        white-space: normal;
+        /* Allow wrapping */
+    }
+
+    .incidents-table td:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        align-items: flex-start;
+    }
+
+    /* Make buttons and selects full width on mobile cards */
+    .incidents-table td select,
+    .incidents-table td button {
+        width: 100%;
+        margin-top: 5px;
+        box-sizing: border-box;
+    }
+
+    .btn-action-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+}

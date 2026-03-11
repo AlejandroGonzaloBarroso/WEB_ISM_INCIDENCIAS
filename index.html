@@ -9,6 +9,9 @@
 </head>
 
 <body>
+    <canvas id="pointMatrix"
+        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none;"></canvas>
+
     <header class="app-header">
         <div class="logo-container">
             <img src="Imagenes/Logotipo-ISM-azul.png" alt="ISM Logo" class="header-logo">
@@ -17,6 +20,7 @@
         <h1 class="header-title" data-i18n="headerTitle">Incident Reporting System</h1>
 
         <div class="header-actions">
+            <a href="about.html" class="btn-theme" style="text-decoration: none;" data-i18n="navAbout">Dev Info</a>
             <button id="themeToggle" class="btn-theme" aria-label="Toggle Theme">DARK</button>
             <button id="langToggle" class="btn-lang">ES</button>
         </div>
@@ -55,13 +59,22 @@
             <form id="incidentForm">
                 <div class="form-group">
                     <label for="incidentCategory" data-i18n="modalCategoryLabel">School Department</label>
-                    <input type="text" id="incidentCategory" readonly
-                        style="background-color: var(--bg-color); color: var(--text-secondary); cursor: not-allowed; font-weight: bold;">
+                    <input type="text" id="incidentCategory" readonly>
                 </div>
 
                 <div class="form-group">
                     <label for="incidentClassroom" data-i18n="modalClassroomLabel">Classroom / Location</label>
                     <input type="text" id="incidentClassroom" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="incidentUrgency" data-i18n="modalUrgencyLabel">Urgency Level</label>
+                    <select id="incidentUrgency" required>
+                        <option value="Low" data-i18n="urgencyLow">🟢 Low (Can wait)</option>
+                        <option value="Medium" data-i18n="urgencyMedium" selected>🟡 Medium (Needs attention soon)
+                        </option>
+                        <option value="High" data-i18n="urgencyHigh">🔴 High (Immediate action required)</option>
+                    </select>
                 </div>
 
                 <div class="form-group">

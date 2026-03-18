@@ -1,14 +1,14 @@
 {
   "name": "web_ism_incidencias",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Sistema de gestión de incidencias para ISM School",
   "main": "electron-main.js",
   "scripts": {
     "start": "node server.js",
     "live": "node server.js",
     "electron": "electron .",
-    "build:pc": "electron-builder build --win --publish never",
-    "build:admin": "electron-builder build --win --publish never -c.extraMetadata.main=electron-admin.js --config builder-admin.json",
+    "build:pc": "electron-builder build --win",
+    "build:admin": "electron-builder build --win -c.extraMetadata.main=electron-admin.js --config builder-admin.json",
     "electron:admin": "electron electron-admin.js",
     "build:android": "npx cap copy && npx cap sync && npx cap open android",
     "release": "node scripts/release.js",

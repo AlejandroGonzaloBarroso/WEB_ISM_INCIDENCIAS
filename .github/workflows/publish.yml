@@ -42,7 +42,9 @@ jobs:
         with:
           files: |
             dist-public-v2/*.exe
+            dist-public-v2/*.yml
             dist-admin-v2/*.exe
+            dist-admin-v2/*.yml
             out-android/www.zip
           draft: false
           prerelease: false

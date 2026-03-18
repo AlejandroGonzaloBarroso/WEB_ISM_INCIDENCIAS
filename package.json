@@ -1,0 +1,76 @@
+{
+  "name": "web_ism_incidencias",
+  "version": "1.0.1",
+  "description": "Sistema de gestión de incidencias para ISM School",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "node server.js",
+    "live": "node server.js",
+    "electron": "electron .",
+    "build:pc": "electron-builder build --win --publish never",
+    "build:admin": "electron-builder build --win --publish never -c.extraMetadata.main=electron-admin.js --config builder-admin.json",
+    "electron:admin": "electron electron-admin.js",
+    "build:android": "npx cap copy && npx cap sync && npx cap open android",
+    "release": "node scripts/release.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlejandroGonzaloBarroso/WEB_ISM_INCIDENCIAS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AlejandroGonzaloBarroso/WEB_ISM_INCIDENCIAS/issues"
+  },
+  "homepage": "https://github.com/AlejandroGonzaloBarroso/WEB_ISM_INCIDENCIAS#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/cli": "^8.2.0",
+    "@capacitor/core": "^8.2.0",
+    "@capacitor/local-notifications": "^8.0.2",
+    "@capacitor/push-notifications": "^8.0.2",
+    "@capgo/capacitor-updater": "^8.43.11",
+    "electron-updater": "^6.8.3",
+    "express": "^4.22.1",
+    "firebase": "^12.10.0"
+  },
+  "devDependencies": {
+    "electron": "^41.0.0",
+    "electron-builder": "^26.8.1",
+    "esbuild": "^0.27.4"
+  },
+  "build": {
+    "appId": "com.ism.incidencias",
+    "productName": "ISM Incidencias",
+    "files": [
+      "www/**/*",
+      "electron-main.js",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "output": "dist-public-v2"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "publish": [
+        {
+          "provider": "github",
+          "owner": "AlejandroGonzaloBarroso",
+          "repo": "WEB_ISM_INCIDENCIAS"
+        }
+      ],
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "perMachine": true
+    }
+  }
+}

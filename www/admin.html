@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="pageTitle">ISM Admin Dashboard</title>
+    <link rel="stylesheet" href="Estilos-CSS/style.css">
+    <link rel="stylesheet" href="Estilos-CSS/admin.css">
+</head>
+
+<body class="admin-body">
+    <header class="app-header">
+        <div class="logo-container">
+            <img src="Imagenes/Logotipo-ISM-azul.png" alt="ISM Logo" class="header-logo">
+            <span id="appVersion" class="app-version">v1.0.0</span>
+        </div>
+
+        <h1 class="header-title" data-i18n="headerTitle">Incidents Admin Dashboard</h1>
+
+        <div class="header-actions">
+            <!-- Language Toggle -->
+            <button id="langToggleBtn" class="btn-theme" aria-label="Toggle Language">EN</button>
+            <!-- Theme Toggle -->
+            <button id="themeToggle" class="btn-theme" data-i18n="themeDark" aria-label="Toggle Theme">DARK</button>
+            <!-- Link back to public form -->
+            <a href="index.html" class="btn-theme" style="text-decoration: none; font-size: 0.9rem;"
+                aria-label="Go to Form" data-i18n="headerFormLink">🏠 Form</a>
+        </div>
+    </header>
+
+    <!-- LOGIN SECTION -->
+    <main id="loginSection" class="admin-content" style="max-width: 500px; padding: 2rem;">
+        <div class="category-card" style="text-align: center; cursor: default;">
+            <img src="Imagenes/Logotipo-ISM-azul.png" alt="ISM Logo" style="max-height: 80px; margin-bottom: 2rem;">
+            <h2 style="color: var(--primary-color); margin-bottom: 1rem;" data-i18n="loginTitle">Admin Portal</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;" data-i18n="loginDesc">
+                Authorized personnel only. Please sign in with your school email account.
+            </p>
+            <button id="btnGoogleLogin" class="btn-primary"
+                style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        fill="#4285F4" />
+                    <path
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.16v2.84C3.99 20.53 7.7 23 12 23z"
+                        fill="#34A853" />
+                    <path
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.16C1.43 8.55 1 10.22 1 12s.43 3.45 1.16 4.93l2.85-2.22.83-.62z"
+                        fill="#FBBC05" />
+                    <path
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.16 7.07l3.68 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                        fill="#EA4335" />
+                </svg>
+                <span data-i18n="loginBtn">Sign in with Google</span>
+            </button>
+            <div id="loginError" class="hidden" style="color: #ff4d4d; margin-top: 1rem; font-size: 0.9rem;"></div>
+        </div>
+    </main>
+
+    <!-- DASHBOARD -->
+    <main id="adminDashboard" class="admin-content hidden">
+        <div class="dashboard-header">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="welcome-section">
+                    <h2 class="welcome-title" data-i18n="dashboardTitle">Reported Incidents</h2>
+                    <span id="adminWelcomeMsg" class="welcome-subtitle"></span>
+                </div>
+                
+                <!-- Premium Status Selector -->
+                <div id="statusControl" class="status-pill hidden">
+                    <div id="statusDot" class="status-dot"></div>
+                    <select id="currentStatusSelect" class="status-select-custom">
+                        <option value="working" data-i18n="statusWorking">Working</option>
+                        <option value="vacation" data-i18n="statusVacation">Vacation</option>
+                        <option value="day_off" data-i18n="statusDayOff">Day Off</option>
+                        <option value="sick" data-i18n="statusSick">Sick</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button id="btnAdminManage" class="btn-theme hidden"
+                    style="background: linear-gradient(135deg, var(--primary-color), #2563eb); color: white; border: none; font-weight: 700; padding: 10px 20px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);"
+                    data-i18n="btnManageAdmins">🔒 Manage Admins</button>
+                <button id="btnLogout" class="btn-theme"
+                    style="background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-primary); font-weight: 600; padding: 10px 20px;"
+                    data-i18n="btnLogout">Logout</button>
+            </div>
+        </div>
+
+        <div id="loadingIndicator" class="loading-spinner">
+            <p data-i18n="loadingText">Loading records...</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="incidents-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="tableDate">Date &amp; Time</th>
+                        <th data-i18n="tableDept">Department</th>
+                        <th data-i18n="tableLocation">Classroom / Location</th>
+                        <th data-i18n="tableDesc">Description</th>
+                        <th data-i18n="tablePhoto">Photo</th>
+                        <th data-i18n="tableStatus">Status</th>
+                        <th data-i18n="tableActions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="incidentsTableBody">
+                    <!-- Data will be injected here by admin.js -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modal: Full Image -->
+    <div id="imageModal" class="modal hidden">
+        <div class="modal-content image-modal-content">
+            <span class="close-btn" id="closeImageModal">&times;</span>
+            <img id="fullSizeImage" src="" alt="Incident Photo Full Size" class="full-size-image">
+        </div>
+    </div>
+
+    <!-- Modal: Comments Chat -->
+    <div id="commentsModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 600px; display: flex; flex-direction: column; height: 80vh;">
+            <span class="close-btn" id="closeCommentsModal"
+                style="align-self: flex-end; margin: 0; padding: 0;">&times;</span>
+            <h2 style="color: var(--primary-color); margin-bottom: 0.5rem; margin-top: -20px;"
+                data-i18n="commentsTitle">Incident Comments</h2>
+            <p id="commentsIncidentDetails"
+                style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+            </p>
+
+            <!-- Chat Box Area -->
+            <div id="commentsContainer"
+                style="flex: 1; overflow-y: auto; background-color: var(--bg-color); border-radius: var(--border-radius); padding: 1rem; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--border-color);">
+                <!-- Comments injected dynamically -->
+            </div>
+
+            <!-- Input Area -->
+            <form id="commentForm" style="display: flex; gap: 10px;">
+                <input type="text" id="newCommentText" data-i18n-placeholder="commentPlaceholder"
+                    placeholder="Write an internal comment..."
+                    style="flex: 1; padding: 0.8rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-primary);"
+                    required>
+                <button type="submit" class="btn-primary" style="padding: 0 1.5rem;"
+                    data-i18n="commentSend">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Superadmin Management (with scroll) -->
+    <div id="superadminModal" class="modal hidden">
+        <div class="modal-content"
+            style="max-width: 700px; padding: 2rem; max-height: 90vh; overflow-y: auto;">
+            <span class="close-btn" id="closeSuperadminModal">&times;</span>
+            <h2 style="color: var(--primary-color); margin-bottom: 1rem;" data-i18n="adminMgmtTitle">Administrator
+                Management</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem;"
+                data-i18n="adminMgmtDesc">
+                Add organizational Google accounts and assign department permissions.
+            </p>
+
+            <form id="addAdminForm"
+                style="background: var(--bg-color); padding: 1.5rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); margin-bottom: 2rem;">
+                <!-- Email first, full width -->
+                <div style="margin-bottom: 1.2rem;">
+                    <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px;"
+                        data-i18n="adminEmailLabel">Google Email</label>
+                    <input type="email" id="newAdminEmail" data-i18n-placeholder="adminEmailPlaceholder"
+                        placeholder="teacher@gmail.com"
+                        style="width: 100%; padding: 0.75rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); box-sizing: border-box; font-size: 1rem;"
+                        required>
+                </div>
+
+                <!-- Schedule -->
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 8px;"
+                        data-i18n="adminScheduleLabel">Schedule (Mon-Fri)</label>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 0.7rem; color: var(--text-secondary);" data-i18n="adminStartLabel">Start</label>
+                            <input type="time" id="newAdminStart" value="08:00"
+                                style="width: 100%; padding: 0.6rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 0.7rem; color: var(--text-secondary);" data-i18n="adminEndLabel">End</label>
+                            <input type="time" id="newAdminEnd" value="16:00"
+                                style="width: 100%; padding: 0.6rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary);">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permission Groups -->
+                <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 0.75rem;"
+                    data-i18n="adminPermsLabel">Permissions</label>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1.2rem;">
+
+
+                    <!-- Group 2: Category Admin -->
+
+                    <div
+                        style="flex: 1; min-width: 140px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.8rem;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #f59e0b; margin-bottom: 0.6rem; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;"
+                            data-i18n="adminGroupAdmin">
+                            🛠️ School Admin
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem;">
+                            <label><input type="checkbox" name="adminPerm" value="Primary_admin"> Primary
+                                Admin</label>
+                            <label><input type="checkbox" name="adminPerm" value="Middle_admin"> Middle
+                                Admin</label>
+                            <label><input type="checkbox" name="adminPerm" value="High_admin"> High School
+                                Admin</label>
+                        </div>
+                    </div>
+
+                    <!-- Group 3: Full Superadmin -->
+                    <div
+                        style="flex: 1; min-width: 140px; background: rgba(255,77,77,0.06); border: 1px solid #ff4d4d55; border-radius: 8px; padding: 0.8rem;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #ff4d4d; margin-bottom: 0.6rem; border-bottom: 1px solid #ff4d4d33; padding-bottom: 4px;"
+                            data-i18n="adminGroupFull">
+                            🔑 Full Control
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem;">
+                            <label style="color: #ff4d4d; font-weight: bold;"><input type="checkbox"
+                                    id="superadminCheck" name="adminPerm" value="ALL"> Superadmin (ALL)</label>
+                            <small style="color: var(--text-secondary); font-size: 0.75rem;"
+                                data-i18n="adminFullDesc">Full system access</small>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Submit -->
+                <div style="text-align: right;">
+                    <button type="submit" class="btn-primary" style="padding: 0.7rem 2rem;"
+                        data-i18n="adminAddBtn">Add Admin</button>
+                </div>
+            </form>
+
+            <h3 style="margin-bottom: 1rem;" data-i18n="adminCurrentTitle">Current Admins</h3>
+            <div class="table-responsive">
+                <table class="incidents-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="adminColEmail">Email</th>
+                            <th data-i18n="adminScheduleLabel">Schedule</th>
+                            <th data-i18n="adminColPerms">Permissions</th>
+                            <th style="text-align: right;" data-i18n="adminColAction">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminsTableBody">
+                        <!-- Loaded by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Daily Check-in -->
+    <div id="checkInModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 450px; text-align: center; padding: 3rem;">
+            <div class="modal-icon-container">🏢</div>
+            <h2 class="welcome-title" style="margin-bottom: 15px;" data-i18n="checkInTitle">Daily Check-in</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 1.1rem; line-height: 1.5;" data-i18n="checkInDesc">Have you started working today?</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button id="btnCheckInWorking" class="btn-primary" style="padding: 1.2rem; font-weight: 700; font-size: 1rem; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);" data-i18n="checkInBtn">Yes, I'm working</button>
+                <button id="btnCheckInOther" class="btn-theme" style="padding: 1rem; font-weight: 600;" data-i18n="checkInOther">Other status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert System -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- Module script for Firebase -->
+    <script type="module" src="JavaScript-JavaScript/admin.js"></script>
+</body>
+
+</html>

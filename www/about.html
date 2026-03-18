@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="aboutTitle">About This Project - ISM</title>
+    <link rel="stylesheet" href="Estilos-CSS/style.css">
+    <style>
+        .about-section {
+            background: var(--card-bg);
+            padding: 3.5rem 2.5rem;
+            max-width: 900px;
+            margin: 3rem auto;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Glassmorphism effect in dark mode */
+        html.dark-mode .about-section {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .about-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-size: 2.8rem;
+            font-family: var(--font-headings);
+            line-height: 1.2;
+        }
+
+        .about-section h3 {
+            color: var(--primary-color);
+            margin-top: 2.5rem;
+            margin-bottom: 1.2rem;
+            font-size: 1.6rem;
+            font-family: var(--font-headings);
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+        }
+
+        .about-section p,
+        .about-section li {
+            color: var(--text-primary);
+            font-size: 1.15rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            opacity: 0.95;
+        }
+
+        .about-section ul {
+            padding-left: 1.5rem;
+            margin-bottom: 2.5rem;
+            list-style-type: none;
+        }
+
+        .about-section li {
+            position: relative;
+            padding-left: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-section li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .dev-footer {
+            margin-top: 5rem;
+            padding-top: 2.5rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-family: var(--font-headings);
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .back-nav {
+            max-width: 900px;
+            margin: 2rem auto 0 auto;
+            display: flex;
+            justify-content: flex-start;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .back-nav a {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-nav a:hover {
+            transform: translateX(-5px);
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="pointMatrix"
+        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none;"></canvas>
+
+    <nav class="back-nav">
+        <a href="index.html">
+            <span>←</span> <span data-i18n="navBack">Back to App</span>
+        </a>
+    </nav>
+
+    <main class="main-content">
+        <section class="about-section">
+            <h2 data-i18n="aboutContentTitle">Creation Process of the Application</h2>
+
+            <p data-i18n="aboutIntro">
+                This web platform, "ISM School Incidents," was conceived as a comprehensive solution to streamline the
+                reporting and management of facility issues within the school environment. The project bridges the gap
+                between teachers, staff, and the maintenance department through a digital-first approach.
+            </p>
+
+            <h3 data-i18n="aboutTechTitle">Technology Stack & Architecture</h3>
+            <ul>
+                <li data-i18n="aboutTech1"><strong>Frontend User Interface:</strong> Built with modern, semantic HTML5
+                    and vanilla JavaScript. Avoided heavy frameworks to ensure lightning-fast load times and high
+                    performance on older devices.</li>
+                <li data-i18n="aboutTech2"><strong>Styling & Aesthetics:</strong> Custom CSS variables enabling seamless
+                    Light/Dark mode transitions. Advanced CSS animations and HTML5 Canvas API for interactive UI.</li>
+                <li data-i18n="aboutTech3"><strong>Database & Cloud:</strong> Firebase Firestore implementation for
+                    real-time NoSQL database synchronization. Stores critical incident data securely.</li>
+                <li data-i18n="aboutTech4"><strong>Media Storage:</strong> Cloudinary API integration for seamless
+                    handling and hosting of incident photograph uploads.</li>
+                <li data-i18n="aboutTech5"><strong>Localization:</strong> Integrated custom JSON-based dynamic
+                    multi-language system (EN/ES) without relying on external libraries.</li>
+            </ul>
+
+            <h3 data-i18n="aboutFeaturesTitle">Key Features Built</h3>
+            <p data-i18n="aboutFeaturesText">
+                The platform includes an interactive multi-department form (Primary, Middle, High), urgency
+                categorization,
+                and a persistent cooldown system utilizing browser LocalStorage to prevent spamming.
+            </p>
+
+            <div class="dev-footer">
+                🚀 <span data-i18n="aboutFooter">Developed by</span> Alejandro Gonzalo Barroso
+            </div>
+        </section>
+    </main>
+
+    <!-- Load App script so theme/lang toggles and canvas work on this page too -->
+    <script type="module" src="JavaScript-JavaScript/app.js"></script>
+</body>
+
+</html>

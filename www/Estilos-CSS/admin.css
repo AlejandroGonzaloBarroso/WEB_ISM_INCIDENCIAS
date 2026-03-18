@@ -1,0 +1,380 @@
+/* Admin specific styles */
+
+.admin-body {
+    background-color: var(--bg-color);
+    /* Inherit from standard if possible */
+}
+
+.admin-content {
+    padding: 2rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Status Pill Stylings */
+.status-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 16px;
+    background: rgba(255, 255, 255, 0.08); /* More subtle */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: auto;
+    min-width: 160px; /* Safe space for "Trabajando" */
+}
+
+.status-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px currentColor;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.status-select-custom {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.95rem; /* Slightly larger for better readability */
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    padding-right: 5px;
+    width: 100%; /* Take full space of the pill */
+}
+
+.status-select-custom option {
+    background: var(--card-bg);
+    color: var(--text-primary);
+}
+
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+}
+
+.incidents-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.incidents-table th,
+.incidents-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.incidents-table th {
+    background-color: var(--primary-color);
+    color: var(--btn-text);
+    font-family: 'Times New Roman', Times, serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+}
+
+.incidents-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* For Dark mode inherit */
+html.dark-mode .incidents-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.tag {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.tag-primary {
+    background-color: #f59e0b;
+}
+
+/* Amber */
+.tag-middle {
+    background-color: #3b82f6;
+}
+
+/* Blue */
+.tag-secondary {
+    background-color: #10b981;
+}
+
+/* Green */
+
+.photo-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease;
+}
+
+.photo-thumb:hover {
+    transform: scale(1.1);
+}
+
+/* Image Modal */
+.image-modal-content {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+}
+
+.full-size-image {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: var(--border-radius);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    border: 4px solid var(--card-bg);
+}
+
+.loading-spinner p {
+    font-weight: bold;
+    color: var(--text-secondary);
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Superadmin Form Layout */
+.admin-manage-form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    background: var(--bg-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.admin-form-group-email {
+    flex: 2;
+    /* Give email input more width than permissions */
+}
+
+.admin-form-group-perms {
+    flex: 1;
+}
+
+.welcome-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.welcome-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.2;
+    background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    padding-bottom: 2px;
+}
+
+.welcome-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+
+/* Responsive Design for Admin Dashboard & Modals */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: center; /* Center for mobile */
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .dashboard-header>div {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .status-pill {
+        width: fit-content;
+    }
+
+
+    /* Stack the Admin Form Fields */
+    .admin-manage-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-manage-form>button {
+        align-self: stretch !important;
+        margin-top: 10px;
+    }
+
+    /* Adjust checkbox wrapping */
+    .admin-form-group-perms>div {
+        flex-wrap: wrap;
+    }
+
+    /* Modals should use full screen width */
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 1rem;
+    }
+
+    /* Comments Modal specific adjustments */
+    #commentsModal .modal-content {
+        height: 90vh;
+        margin: 5% auto;
+    }
+
+    /* Make table rows stackable or scrollable smoothly */
+    .table-responsive {
+        border-radius: 8px;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+        overflow-x: hidden;
+    }
+
+    .incidents-table {
+        display: block;
+    }
+
+    .incidents-table thead {
+        display: none;
+        /* Hide headers on mobile */
+    }
+
+    .incidents-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .incidents-table tr {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        margin-bottom: 1rem;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    html.dark-mode .incidents-table tr:hover {
+        background-color: var(--card-bg);
+        /* No hover on cards */
+    }
+
+    .incidents-table td {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.75rem 0;
+        text-align: left;
+        font-size: 0.95rem;
+        white-space: normal;
+        /* Allow wrapping */
+    }
+
+    .incidents-table td:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        align-items: flex-start;
+    }
+
+    /* Make buttons and selects full width on mobile cards */
+    .incidents-table td select,
+    .incidents-table td button {
+        width: 100%;
+        margin-top: 5px;
+        box-sizing: border-box;
+    }
+
+    .btn-action-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+}
+
+/* Modal Premium Styling */
+#checkInModal .modal-content {
+    background: #0f172a; /* Solid dark blue for better contrast */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    border-radius: 24px;
+}
+
+#checkInModal .btn-theme {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3); /* Thicker border */
+    color: #ffffff;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 1.2rem;
+    transition: all 0.2s ease;
+}
+
+#checkInModal .btn-theme:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.modal-icon-container {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 15px rgba(37, 99, 235, 0.3));
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}

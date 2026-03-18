@@ -1,0 +1,31 @@
+{
+  "appId": "com.ism.admin",
+  "productName": "ISM Admin",
+  "files": [
+    "www/**/*",
+    "electron-admin.js",
+    "node_modules/**/*"
+  ],
+  "directories": {
+    "output": "dist-admin-v2"
+  },
+  "win": {
+    "target": [
+      "nsis"
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "AlejandroGonzaloBarroso",
+        "repo": "WEB_ISM_INCIDENCIAS"
+      }
+    ],
+    "verifyUpdateCodeSignature": false
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "perMachine": true
+  }
+}

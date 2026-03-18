@@ -1,0 +1,9 @@
+{
+  "appId": "com.ism.admin",
+  "appName": "ISM Admin",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

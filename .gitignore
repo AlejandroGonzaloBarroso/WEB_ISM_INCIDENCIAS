@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist-installer/
+dist-admin-app/
+dist-public/
+dist-admin-v2/
+dist-public-v2/
+dist/
+build/
+bin/
+obj/
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Environment
+.env
+.env.local
+
+# Large files
+*.exe
+*.zip
+*.7z
+*.rar
+*.pkg
+*.dmg
+win-unpacked/

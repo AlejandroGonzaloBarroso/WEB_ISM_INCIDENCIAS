@@ -6,18 +6,27 @@ const port = 3000;
 
 // Start Express Server
 function startServer() {
-  expressApp.use(express.static(path.join(__dirname, 'www')));
-  
-  expressApp.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'www/index.html'));
-  });
+  return new Promise((resolve) => {
+    expressApp.use(express.static(path.join(__dirname, 'www')));
+    
+    expressApp.get('/', (req, res) => {
+      res.sendFile(path.join(__dirname, 'www/index.html'));
+    });
 
-  expressApp.listen(port, '0.0.0.0', () => {
-    console.log(`Live Server started on port ${port}`);
+    const server = expressApp.listen(0, '127.0.0.1', () => {
+      const port = server.address().port;
+      console.log(`Live Server started on port ${port}`);
+      resolve(port);
+    });
+    
+    server.on('error', (err) => {
+      console.error('Failed to start server:', err);
+      resolve(3000);
+    });
   });
 }
 
-function createWindow() {
+function createWindow(port) {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -29,15 +38,15 @@ function createWindow() {
   });
 
   // Load via the local server to avoid ES Module issues with file:// protocol
-  win.loadURL(`http://localhost:${port}`);
+  win.loadURL(`http://127.0.0.1:${port}`);
   
   // Clean up the UI
   win.setMenuBarVisibility(false);
 }
 
-app.whenReady().then(() => {
-  startServer();
-  createWindow();
+app.whenReady().then(async () => {
+  const port = await startServer();
+  createWindow(port);
 
   // Check for updates after a short delay
   setTimeout(() => {
@@ -49,9 +58,10 @@ app.whenReady().then(() => {
     }
   }, 3000);
 
-  app.on('activate', () => {
+  app.on('activate', async () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      const port = await startServer();
+      createWindow(port);
     }
   });
 });

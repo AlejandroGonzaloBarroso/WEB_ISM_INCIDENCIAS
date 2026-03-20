@@ -17,7 +17,8 @@
       {
         "provider": "github",
         "owner": "AlejandroGonzaloBarroso",
-        "repo": "WEB_ISM_INCIDENCIAS"
+        "repo": "WEB_ISM_INCIDENCIAS",
+        "channel": "admin"
       }
     ],
     "verifyUpdateCodeSignature": false

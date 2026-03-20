@@ -1,21 +1,26 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');const express = require('express');
 const expressApp = express();
-const port = 3001;
 
-// Start Express server to serve the www directory
+// Start Express server with a dynamic port
 function startServer() {
-  expressApp.use(express.static(path.join(__dirname, 'www')));
-  
-  // Explicitly serve admin.html for the root if needed, 
-  // but we can also just load it directly in Electron.
-  
-  expressApp.listen(port, '0.0.0.0', () => {
-    console.log(`Admin Server running at http://localhost:${port}`);
+  return new Promise((resolve) => {
+    expressApp.use(express.static(path.join(__dirname, 'www')));
+    const server = expressApp.listen(0, '127.0.0.1', () => {
+      const port = server.address().port;
+      console.log(`Admin Server running at http://127.0.0.1:${port}`);
+      resolve(port);
+    });
+    
+    server.on('error', (err) => {
+      console.error('Failed to start server:', err);
+      // Fallback
+      resolve(3001);
+    });
   });
 }
 
-function createWindow() {
+function createWindow(port) {
   const mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
@@ -26,16 +31,13 @@ function createWindow() {
     }
   });
 
-  // Load admin.html specifically for this app
-  mainWindow.loadURL(`http://localhost:${port}/admin.html`);
-  
-  // Optional: Remove menu for a cleaner look
-  // mainWindow.setMenu(null);
+  // Load admin.html using the dynamically assigned port
+  mainWindow.loadURL(`http://127.0.0.1:${port}/admin.html`);
 }
 
-app.whenReady().then(() => {
-  startServer();
-  createWindow();
+app.whenReady().then(async () => {
+  const port = await startServer();
+  createWindow(port);
 
   // Check for updates after a short delay
   setTimeout(() => {
@@ -47,9 +49,13 @@ app.whenReady().then(() => {
     }
   }, 3000);
 
-  app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  app.on('activate', async function () {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      const port = await startServer();
+      createWindow(port);
+    }
   });
+
 });
 
 app.on('window-all-closed', function () {

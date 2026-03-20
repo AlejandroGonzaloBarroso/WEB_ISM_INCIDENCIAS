@@ -1,6 +1,6 @@
 {
   "name": "web_ism_incidencias",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Sistema de gestión de incidencias para ISM School",
   "main": "electron-main.js",
   "scripts": {
@@ -8,7 +8,9 @@
     "live": "node server.js",
     "electron": "electron .",
     "build:pc": "electron-builder build --win",
+    "build:mac": "electron-builder build --mac",
     "build:admin": "electron-builder build --win -c.extraMetadata.main=electron-admin.js --config builder-admin.json",
+    "build:admin:mac": "electron-builder build --mac -c.extraMetadata.main=electron-admin.js --config builder-admin.json",
     "electron:admin": "electron electron-admin.js",
     "build:android": "npx cap copy && npx cap sync && npx cap open android",
     "release": "node scripts/release.js",
@@ -71,6 +73,18 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "perMachine": true
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "publish": [
+        {
+          "provider": "github",
+          "owner": "AlejandroGonzaloBarroso",
+          "repo": "WEB_ISM_INCIDENCIAS"
+        }
+      ]
     }
   }
 }

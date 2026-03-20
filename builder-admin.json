@@ -28,5 +28,18 @@
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
     "perMachine": true
+  },
+  "mac": {
+    "target": [
+      "dmg"
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "AlejandroGonzaloBarroso",
+        "repo": "WEB_ISM_INCIDENCIAS",
+        "channel": "admin"
+      }
+    ]
   }
 }

@@ -108,6 +108,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Initialize Status UI
                 initStatusUI();
                 checkDailyStatus();
+
+                // If superadmin, show the manage button
+                if (currentAdmin.permisos.includes("ALL")) {
+                    document.getElementById('btnAdminManage').classList.remove('hidden');
+                }
+
+                showDashboard();
             } else {
                 // Not an admin, sign them back out
                 await signOut(auth);

@@ -413,12 +413,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // DASHBOARD & DATA LOGIC
     // ----------------------------------------------------------------------
 
-    let isQueryingIncidents = false;
+    let incidentsUnsubscribe = null;
+    let initialCleanupDone = false;
 
     async function loadIncidents() {
-        if (isQueryingIncidents) return;
-        isQueryingIncidents = true;
-
         try {
             // Also load version for the UI
             fetch('version.json').then(r => r.json()).then(data => {
@@ -428,121 +426,124 @@ document.addEventListener('DOMContentLoaded', () => {
             }).catch(() => {});
 
             if (!tableBody || !loadingIndicator) return;
-
             loadingIndicator.classList.remove('hidden');
-            tableBody.innerHTML = '';
 
-            const querySnapshot = await getDocs(collection(db, "incidencias"));
-            loadingIndicator.classList.add('hidden');
+            if (incidentsUnsubscribe) incidentsUnsubscribe();
 
-            if (querySnapshot.empty) {
-                tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">${dictionary && dictionary[currentLang] ? dictionary[currentLang].noIncidents : 'No incidents reported yet.'}</td></tr>`;
-                return;
-            }
+            incidentsUnsubscribe = onSnapshot(collection(db, "incidencias"), async (querySnapshot) => {
+                loadingIndicator.classList.add('hidden');
+                tableBody.innerHTML = '';
 
-            // --- AUTO-CLEANUP using "Internet Clock" (UTC) ---
-            let nowMs = Date.now();
-            try {
-                // Fetch current UTC time from a public API to ensure accuracy regardless of local computer time
-                const timeRes = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC', { signal: AbortSignal.timeout(3000) });
-                if (timeRes.ok) {
-                    const timeData = await timeRes.json();
-                    nowMs = new Date(timeData.datetime).getTime();
-                    console.log("Using network clock for cleanup verification.");
-                }
-            } catch (err) {
-                console.warn("Network clock unavailable, falling back to local system time.", err);
-            }
-
-            const TWO_MONTHS_MS = 60 * 24 * 60 * 60 * 1000;
-            const deletePromises = [];
-            querySnapshot.forEach(docSnap => {
-                const ts = docSnap.data().timestamp;
-                if (ts && (nowMs - ts.toMillis()) > TWO_MONTHS_MS) {
-                    deletePromises.push(deleteDoc(doc(db, "incidencias", docSnap.id)));
-                }
-            });
-
-            if (deletePromises.length > 0) {
-                await Promise.all(deletePromises);
-                console.log(`Auto-cleaned ${deletePromises.length} old incident(s) using synchronized clock.`);
-            }
-            // --------------------------------------------------
-
-            // Client-side filtering and sorting
-            const incidents = [];
-            querySnapshot.forEach(doc => {
-                const data = doc.data();
-                data.id = doc.id; // Store document ID for edits/deletes
-
-                // FILTER: Only show if admin has permission for this category, or has category_admin, or is "ALL"
-                const cat = data.category;
-                if (
-                    currentAdmin.permisos.includes("ALL") ||
-                    currentAdmin.permisos.includes(cat) ||
-                    currentAdmin.permisos.includes(cat + "_admin")
-                ) {
-                    incidents.push(data);
-                }
-            });
-
-            if (incidents.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">${dictionary && dictionary[currentLang] ? dictionary[currentLang].noDeptIncidents : 'No incidents found for your departments.'}</td></tr>`;
-                return;
-            }
-
-            incidents.sort((a, b) => {
-                const timeA = a.timestamp ? a.timestamp.toMillis() : 0;
-                const timeB = b.timestamp ? b.timestamp.toMillis() : 0;
-                return timeB - timeA;
-            });
-
-            incidents.forEach((data) => {
-                // Format Date
-                let dateStr = "Unknown Date";
-                if (data.timestamp) {
-                    const date = data.timestamp.toDate();
-                    dateStr = date.toLocaleString();
+                if (querySnapshot.empty) {
+                    tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">${dictionary && dictionary[currentLang] ? dictionary[currentLang].noIncidents : 'No incidents reported yet.'}</td></tr>`;
+                    return;
                 }
 
-                // Format Category Tag
-                let tagClass = "tag-primary";
-                if (data.category === "Middle") tagClass = "tag-middle";
-                if (data.category === "High" || data.category === "Secondary") tagClass = "tag-secondary";
+                // --- AUTO-CLEANUP using "Internet Clock" (UTC) (ONLY ON BOOT) ---
+                if (!initialCleanupDone) {
+                    initialCleanupDone = true;
+                    let nowMs = Date.now();
+                    try {
+                        const timeRes = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC', { signal: AbortSignal.timeout(3000) });
+                        if (timeRes.ok) {
+                            const timeData = await timeRes.json();
+                            nowMs = new Date(timeData.datetime).getTime();
+                        }
+                    } catch (err) {
+                        console.warn("Network clock unavailable, falling back to local system time.", err);
+                    }
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${dateStr}</td>
-                    <td><span class="tag ${tagClass}">${data.category || 'Unknown'}</span></td>
-                    <td><strong>${data.classroom || 'N/A'}</strong><br><small>Urgency: ${data.urgency || 'Medium'}</small></td>
-                    <td>${data.description}</td>
-                    <td>
-                        ${data.imageUrl
-                        ? `<img src="${data.imageUrl}" alt="Photo" class="photo-thumb" data-full="${data.imageUrl}">`
-                        : `<span style="color: var(--text-secondary); font-style: italic;">No Photo</span>`}
-                    </td>
-                    <td>
-                        <select class="status-select" data-id="${data.id}" style="padding: 5px; border-radius: 4px;">
-                            <option value="Sin revisar" ${data.status === 'Sin revisar' || !data.status ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusUnreviewed : 'Sin revisar'}</option>
-                            <option value="En proceso" ${data.status === 'En proceso' ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusInProgress : 'En proceso'}</option>
-                            <option value="Resuelta" ${data.status === 'Resuelta' ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusResolved : 'Resuelta'}</option>
-                        </select>
-                    </td>
-                    <td style="display: flex; gap: 5px;">
-                        <button class="btn-chat" data-id="${data.id}" title="Comments" style="padding: 5px 10px; background: var(--primary-color); border:none;  border-radius: 4px; color: white; cursor: pointer;">💬</button>
-                        <button class="btn-delete" data-id="${data.id}" title="Delete" style="padding: 5px 10px; background: #ff4d4d; border:none; border-radius: 4px; color: white; cursor: pointer;">🗑️</button>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
+                    const TWO_MONTHS_MS = 60 * 24 * 60 * 60 * 1000;
+                    const deletePromises = [];
+                    querySnapshot.forEach(docSnap => {
+                        const ts = docSnap.data().timestamp;
+                        if (ts && (nowMs - ts.toMillis()) > TWO_MONTHS_MS) {
+                            deletePromises.push(deleteDoc(doc(db, "incidencias", docSnap.id)));
+                        }
+                    });
+
+                    if (deletePromises.length > 0) {
+                        await Promise.all(deletePromises);
+                    }
+                }
+                // --------------------------------------------------
+
+                // Client-side filtering and sorting
+                const incidents = [];
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+
+                    const cat = data.category;
+                    if (
+                        currentAdmin.permisos.includes("ALL") ||
+                        currentAdmin.permisos.includes(cat) ||
+                        currentAdmin.permisos.includes(cat + "_admin")
+                    ) {
+                        incidents.push(data);
+                    }
+                });
+
+                if (incidents.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">${dictionary && dictionary[currentLang] ? dictionary[currentLang].noDeptIncidents : 'No incidents found for your departments.'}</td></tr>`;
+                    return;
+                }
+
+                incidents.sort((a, b) => {
+                    const timeA = a.timestamp ? a.timestamp.toMillis() : 0;
+                    const timeB = b.timestamp ? b.timestamp.toMillis() : 0;
+                    return timeB - timeA;
+                });
+
+                incidents.forEach((data) => {
+                    // Format Date
+                    let dateStr = "Unknown Date";
+                    if (data.timestamp) {
+                        const date = data.timestamp.toDate();
+                        dateStr = date.toLocaleString();
+                    }
+
+                    // Format Category Tag
+                    let tagClass = "tag-primary";
+                    if (data.category === "Middle") tagClass = "tag-middle";
+                    if (data.category === "High" || data.category === "Secondary") tagClass = "tag-secondary";
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${dateStr}</td>
+                        <td><span class="tag ${tagClass}">${data.category || 'Unknown'}</span></td>
+                        <td><strong>${data.classroom || 'N/A'}</strong><br><small>Urgency: ${data.urgency || 'Medium'}</small></td>
+                        <td>${data.description}</td>
+                        <td>
+                            ${data.imageUrl
+                            ? `<img src="${data.imageUrl}" alt="Photo" class="photo-thumb" data-full="${data.imageUrl}">`
+                            : `<span style="color: var(--text-secondary); font-style: italic;">No Photo</span>`}
+                        </td>
+                        <td>
+                            <select class="status-select" data-id="${data.id}" style="padding: 5px; border-radius: 4px;">
+                                <option value="Sin revisar" ${data.status === 'Sin revisar' || !data.status ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusUnreviewed : 'Sin revisar'}</option>
+                                <option value="En proceso" ${data.status === 'En proceso' ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusInProgress : 'En proceso'}</option>
+                                <option value="Resuelta" ${data.status === 'Resuelta' ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusResolved : 'Resuelta'}</option>
+                            </select>
+                        </td>
+                        <td style="display: flex; gap: 5px;">
+                            <button class="btn-chat" data-id="${data.id}" title="Comments" style="padding: 5px 10px; background: var(--primary-color); border:none;  border-radius: 4px; color: white; cursor: pointer;">💬</button>
+                            <button class="btn-delete" data-id="${data.id}" title="Delete" style="padding: 5px 10px; background: #ff4d4d; border:none; border-radius: 4px; color: white; cursor: pointer;">🗑️</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+
+                attachDashboardEventListeners();
+
+            }, (error) => {
+                console.error("Error fetching incidents:", error);
+                loadingIndicator.innerHTML = '<p style="color: red;">Error loading incidents. Check console.</p>';
             });
-
-            attachDashboardEventListeners();
 
         } catch (error) {
-            console.error("Error fetching incidents:", error);
-            loadingIndicator.innerHTML = '<p style="color: red;">Error loading incidents. Check console.</p>';
-        } finally {
-            isQueryingIncidents = false;
+            console.error("Error setting up onSnapshot:", error);
+            loadingIndicator.innerHTML = '<p style="color: red;">Error initializing real-time database.</p>';
         }
     }
 

@@ -119,7 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Also load version for the UI
             fetch('version.json').then(r => r.json()).then(data => {
-                if (data.version) document.getElementById('appVersion').textContent = `v${data.version}`;
+                const verEl = document.getElementById('appVersion');
+                if (verEl && data.version) verEl.textContent = `v${data.version}`;
+                checkShowChangelog(data.version);
             }).catch(() => {});
 
             const response = await fetch('Datos_Locales-JSON/diccionario.json');
@@ -345,4 +347,67 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize the app
     loadDictionary();
     checkOTAUpdates(); // Check for Android updates
+
+    // --- CHANGELOG LOGIC ---
+    async function checkShowChangelog(currentVersion) {
+        if (!currentVersion) return;
+        
+        const lastSeenVersion = localStorage.getItem('lastSeenVersion');
+        if (lastSeenVersion === currentVersion) return; // Already seen
+
+        try {
+            const res = await fetch('Datos_Locales-JSON/changelog.json');
+            if (!res.ok) return;
+            const changelogData = await res.json();
+            
+            if (changelogData[currentVersion]) {
+                // Get language (fallback to 'es')
+                const lang = (typeof document.getElementById('langToggle') !== 'undefined' 
+                            && document.getElementById('langToggle').textContent.toLowerCase().includes('en')) ? 'en' : 'es';
+                            
+                const notes = changelogData[currentVersion][lang] || changelogData[currentVersion]['es'];
+                
+                if (notes && notes.length > 0) {
+                    const modal = document.getElementById('changelogModal');
+                    const list = document.getElementById('changelogList');
+                    const title = document.getElementById('changelogTitle');
+                    const verText = document.getElementById('changelogVersionNumber');
+                    
+                    if (modal && list && verText) {
+                        verText.textContent = currentVersion;
+                        title.textContent = lang === 'en' ? 'App Updated! 🚀' : '¡App Actualizada! 🚀';
+                        
+                        list.innerHTML = '';
+                        notes.forEach(note => {
+                            const li = document.createElement('li');
+                            li.textContent = note;
+                            li.style.marginBottom = "8px";
+                            list.appendChild(li);
+                        });
+                        
+                        modal.classList.remove('hidden');
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Failed to load changelog:", e);
+        } finally {
+            // Save it so we don't show it again
+            localStorage.setItem('lastSeenVersion', currentVersion);
+        }
+    }
+
+    // Assuming checkOTAUpdates is defined elsewhere and calls checkShowChangelog
+    // For example, if checkOTAUpdates fetches version.json and then calls checkShowChangelog:
+    // function checkOTAUpdates() {
+    //     fetch('version.json')
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             const currentVersion = data.version;
+    //             // ... other OTA update logic ...
+    //             checkShowChangelog(currentVersion); // Call changelog check here
+    //         })
+    //         .catch(error => console.error('Error fetching version.json:', error));
+    // }
+
 });

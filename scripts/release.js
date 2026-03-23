@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 
 // Files to update
 const packageJsonPath = path.join(__dirname, '..', 'package.json');
-const versionJsonPath = path.join(__dirname, '..', 'version.json');
+const versionJsonPath = path.join(__dirname, '..', 'www', 'version.json');
 
 function updateVersions(newVersion) {
     // 1. Update package.json

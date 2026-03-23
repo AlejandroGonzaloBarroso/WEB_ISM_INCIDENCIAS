@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const result = await signInWithPopup(auth, provider);
-            await verifyAdminAccess(result.user);
+            // onAuthStateChanged will handle verifyAdminAccess automatically
         } catch (error) {
             console.error("Login Error:", error);
             showLoginError(error.message);
@@ -108,13 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Initialize Status UI
                 initStatusUI();
                 checkDailyStatus();
-
-                // If superadmin, show the manage button
-                if (currentAdmin.permisos.includes("ALL")) {
-                    document.getElementById('btnAdminManage').classList.remove('hidden');
-                }
-
-                showDashboard();
             } else {
                 // Not an admin, sign them back out
                 await signOut(auth);
@@ -127,6 +120,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- CHANGELOG LOGIC ---
+    async function checkShowChangelog(currentVersion) {
+        if (!currentVersion) return;
+        
+        const lastSeenVersion = localStorage.getItem('lastSeenVersion');
+        if (lastSeenVersion === currentVersion) return; // Already seen
+
+        try {
+            const res = await fetch('Datos_Locales-JSON/changelog.json');
+            if (!res.ok) return;
+            const changelogData = await res.json();
+            
+            if (changelogData[currentVersion]) {
+                // Get language (currently using global dictionary, if fallback needed, use 'es')
+                // 'currentLang' is typically managed within app bounds, defaulting to 'es' here if undefined
+                const lang = (typeof currentLang !== 'undefined' ? currentLang : 'es');
+                const notes = changelogData[currentVersion][lang] || changelogData[currentVersion]['es'];
+                
+                if (notes && notes.length > 0) {
+                    const modal = document.getElementById('changelogModal');
+                    const list = document.getElementById('changelogList');
+                    const title = document.getElementById('changelogTitle');
+                    const verText = document.getElementById('changelogVersionNumber');
+                    
+                    if (modal && list && verText) {
+                        verText.textContent = currentVersion;
+                        title.textContent = lang === 'en' ? 'App Updated! 🚀' : '¡App Actualizada! 🚀';
+                        
+                        list.innerHTML = '';
+                        notes.forEach(note => {
+                            const li = document.createElement('li');
+                            li.textContent = note;
+                            li.style.marginBottom = "8px";
+                            list.appendChild(li);
+                        });
+                        
+                        modal.classList.remove('hidden');
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Failed to load changelog:", e);
+        } finally {
+            // Save it so we don't show it again
+            localStorage.setItem('lastSeenVersion', currentVersion);
+        }
+    }
     function showLoginScreen() {
         loginSection.classList.remove('hidden');
         adminDashboard.classList.add('hidden');
@@ -366,12 +406,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // DASHBOARD & DATA LOGIC
     // ----------------------------------------------------------------------
 
+    let isQueryingIncidents = false;
+
     async function loadIncidents() {
+        if (isQueryingIncidents) return;
+        isQueryingIncidents = true;
+
         try {
             // Also load version for the UI
             fetch('version.json').then(r => r.json()).then(data => {
                 const verEl = document.getElementById('appVersion');
                 if (verEl && data.version) verEl.textContent = `v${data.version}`;
+                checkShowChangelog(data.version); // Trigger changelog logic
             }).catch(() => {});
 
             if (!tableBody || !loadingIndicator) return;
@@ -488,6 +534,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Error fetching incidents:", error);
             loadingIndicator.innerHTML = '<p style="color: red;">Error loading incidents. Check console.</p>';
+        } finally {
+            isQueryingIncidents = false;
         }
     }
 

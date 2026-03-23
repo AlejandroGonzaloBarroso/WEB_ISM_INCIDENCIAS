@@ -52,6 +52,13 @@ app.whenReady().then(async () => {
   setTimeout(() => {
     try {
       const { autoUpdater } = require('electron-updater');
+
+      // When an update is downloaded, instantly install it and restart
+      autoUpdater.on('update-downloaded', (info) => {
+        // quitAndInstall(isSilent, isForceRunAfter)
+        autoUpdater.quitAndInstall(true, true);
+      });
+
       autoUpdater.checkForUpdatesAndNotify();
     } catch (err) {
       console.error("AutoUpdater error:", err);

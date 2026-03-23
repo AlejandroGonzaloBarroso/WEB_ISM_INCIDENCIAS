@@ -22,10 +22,20 @@ export async function checkOTAUpdates() {
         if (!response.ok) return;
 
         const remote = await response.json();
-        const info = await App.getInfo();
-        const currentVersion = info.version;
+        
+        // Fetch local version from the currently active web bundle
+        let currentVersion = "1.0.0";
+        try {
+            const localResponse = await fetch('version.json', { cache: 'no-store' });
+            if (localResponse.ok) {
+                const local = await localResponse.json();
+                currentVersion = local.version || currentVersion;
+            }
+        } catch (e) {
+            console.warn("OTA: Local version.json not found. Falling back to 1.0.0");
+        }
 
-        console.log(`OTA: Local Version: ${currentVersion}, Remote Version: ${remote.version}`);
+        console.log(`OTA: Local bundle Version: ${currentVersion}, Remote Version: ${remote.version}`);
 
         if (remote.version !== currentVersion && remote.androidZipUrl) {
             console.log("OTA: New update found. Downloading...");

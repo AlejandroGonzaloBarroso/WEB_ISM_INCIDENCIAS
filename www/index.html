@@ -102,6 +102,19 @@
     <!-- Load App script as a module so we can use modern Firebase imports -->
     <script type="module" src="JavaScript-JavaScript/app.js"></script>
 
+    <!-- Modal: Changelog -->
+    <div id="changelogModal" class="modal hidden">
+        <div class="modal-content glass-panel" style="max-width: 500px; text-align: center; padding: 2rem;">
+            <div class="modal-icon-container" style="font-size: 3rem; margin-bottom: 10px;">🚀</div>
+            <h2 id="changelogTitle" style="color: var(--primary-color); margin-bottom: 10px;">¡App Actualizada!</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 15px;">Novedades en la versión <strong id="changelogVersionNumber" style="color: var(--text-primary);"></strong>:</p>
+            <ul id="changelogList" style="text-align: left; margin: 15px 0 25px 20px; color: var(--text-primary); font-size: 0.95rem; line-height: 1.6;">
+                <!-- Injected via JS -->
+            </ul>
+            <button onclick="document.getElementById('changelogModal').classList.add('hidden')" class="btn-primary" style="padding: 0.8rem 2rem; width: 100%; border-radius: 8px;">¡Entendido!</button>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast" class="toast hidden"></div>
 </body>

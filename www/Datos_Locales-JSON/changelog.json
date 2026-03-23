@@ -1,0 +1,16 @@
+{
+  "1.0.8": {
+    "es": [
+      "Se ha solucionado un error que duplicaba las incidencias en pantalla.",
+      "Se ha añadido este aviso de novedades (Changelog) tras cada actualización.",
+      "Se ha implementado protección interna para evitar saturación de base de datos.",
+      "Mejoras de rendimiento interno."
+    ],
+    "en": [
+      "Fixed a bug that duplicated incidents on the screen.",
+      "Added this 'What's New' (Changelog) prompt after every update.",
+      "Implemented internal protection to prevent database saturation.",
+      "Internal performance improvements."
+    ]
+  }
+}

@@ -93,6 +93,29 @@
             <p data-i18n="loadingText">Loading records...</p>
         </div>
 
+        <!-- Pagination & Sorting Controls -->
+        <div class="table-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <label for="itemsPerPage" style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;">Ver:</label>
+                <select id="itemsPerPage" style="padding: 5px 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="all">Todas</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <label for="sortSelector" style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;">Ordenar por:</label>
+                <select id="sortSelector" style="padding: 5px 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">
+                    <option value="date_desc" selected>Fecha creación (Más reciente)</option>
+                    <option value="date_asc">Fecha creación (Más antigua)</option>
+                    <option value="status_urgency">Estado (Requiere atención primero)</option>
+                    <option value="name_asc">Aula / Nombre (A-Z)</option>
+                </select>
+            </div>
+        </div>
+
         <div class="table-responsive">
             <table class="incidents-table">
                 <thead>
@@ -110,6 +133,16 @@
                     <!-- Data will be injected here by admin.js -->
                 </tbody>
             </table>
+        </div>
+
+        <!-- Bottom Pagination Controls -->
+        <div class="pagination-bottom" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 10px 15px; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color);">
+            <span id="paginationInfo" style="color: var(--text-secondary); font-size: 0.9rem;">Mostrando 0-0 de 0</span>
+            <div style="display: flex; gap: 10px;">
+                <button id="btnPrevPage" class="btn-theme" style="padding: 5px 15px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">&#8592; Anterior</button>
+                <span id="pageIndicator" style="display: flex; align-items: center; font-weight: bold; color: var(--primary-color);">Página 1</span>
+                <button id="btnNextPage" class="btn-theme" style="padding: 5px 15px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">Siguiente &#8594;</button>
+            </div>
         </div>
     </main>
 

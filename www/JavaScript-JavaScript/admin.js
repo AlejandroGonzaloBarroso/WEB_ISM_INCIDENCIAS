@@ -42,6 +42,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeImageModal = document.getElementById('closeImageModal');
     const fullSizeImage = document.getElementById('fullSizeImage');
 
+    // Pagination & Sorting UI
+    const itemsPerPageSelect = document.getElementById('itemsPerPage');
+    const sortSelector = document.getElementById('sortSelector');
+    const btnPrevPage = document.getElementById('btnPrevPage');
+    const btnNextPage = document.getElementById('btnNextPage');
+    const pageIndicator = document.getElementById('pageIndicator');
+    const paginationInfo = document.getElementById('paginationInfo');
+    
+    // Pagination & Sorting State
+    let globalIncidents = [];
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let currentSort = 'date_desc';
+
     // ----------------------------------------------------------------------
     // AUTHENTICATION LOGIC
     // ----------------------------------------------------------------------
@@ -468,8 +482,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 // --------------------------------------------------
 
-                // Client-side filtering and sorting
-                const incidents = [];
+                // Client-side filtering and populating global array
+                const newIncidents = [];
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
                     data.id = doc.id;
@@ -480,62 +494,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         currentAdmin.permisos.includes(cat) ||
                         currentAdmin.permisos.includes(cat + "_admin")
                     ) {
-                        incidents.push(data);
+                        newIncidents.push(data);
                     }
                 });
 
-                if (incidents.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">${dictionary && dictionary[currentLang] ? dictionary[currentLang].noDeptIncidents : 'No incidents found for your departments.'}</td></tr>`;
-                    return;
-                }
-
-                incidents.sort((a, b) => {
-                    const timeA = a.timestamp ? a.timestamp.toMillis() : 0;
-                    const timeB = b.timestamp ? b.timestamp.toMillis() : 0;
-                    return timeB - timeA;
-                });
-
-                incidents.forEach((data) => {
-                    // Format Date
-                    let dateStr = "Unknown Date";
-                    if (data.timestamp) {
-                        const date = data.timestamp.toDate();
-                        dateStr = date.toLocaleString();
-                    }
-
-                    // Format Category Tag
-                    let tagClass = "tag-primary";
-                    if (data.category === "Middle") tagClass = "tag-middle";
-                    if (data.category === "High" || data.category === "Secondary") tagClass = "tag-secondary";
-
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${dateStr}</td>
-                        <td><span class="tag ${tagClass}">${data.category || 'Unknown'}</span></td>
-                        <td><strong>${data.classroom || 'N/A'}</strong><br><small>Urgency: ${data.urgency || 'Medium'}</small></td>
-                        <td>${data.description}</td>
-                        <td>
-                            ${data.imageUrl
-                            ? `<img src="${data.imageUrl}" alt="Photo" class="photo-thumb" data-full="${data.imageUrl}">`
-                            : `<span style="color: var(--text-secondary); font-style: italic;">No Photo</span>`}
-                        </td>
-                        <td>
-                            <select class="status-select" data-id="${data.id}" style="padding: 5px; border-radius: 4px;">
-                                <option value="Sin revisar" ${data.status === 'Sin revisar' || !data.status ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusUnreviewed : 'Sin revisar'}</option>
-                                <option value="En proceso" ${data.status === 'En proceso' ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusInProgress : 'En proceso'}</option>
-                                <option value="Resuelta" ${data.status === 'Resuelta' ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusResolved : 'Resuelta'}</option>
-                            </select>
-                        </td>
-                        <td style="display: flex; gap: 5px;">
-                            <button class="btn-chat" data-id="${data.id}" title="Comments" style="padding: 5px 10px; background: var(--primary-color); border:none;  border-radius: 4px; color: white; cursor: pointer;">💬</button>
-                            <button class="btn-delete" data-id="${data.id}" title="Delete" style="padding: 5px 10px; background: #ff4d4d; border:none; border-radius: 4px; color: white; cursor: pointer;">🗑️</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(tr);
-                });
-
-                attachDashboardEventListeners();
-
+                globalIncidents = newIncidents;
+                renderTable(); // Call external render function
             }, (error) => {
                 console.error("Error fetching incidents:", error);
                 loadingIndicator.innerHTML = '<p style="color: red;">Error loading incidents. Check console.</p>';
@@ -546,6 +510,157 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingIndicator.innerHTML = '<p style="color: red;">Error initializing real-time database.</p>';
         }
     }
+
+    // --- PAGINATION & RENDERING ---
+    function renderTable() {
+        if (!tableBody) return;
+        tableBody.innerHTML = '';
+
+        if (globalIncidents.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">${dictionary && dictionary[currentLang] ? dictionary[currentLang].noDeptIncidents : 'No incidents found for your departments.'}</td></tr>`;
+            paginationInfo.textContent = 'Mostrando 0-0 de 0';
+            btnPrevPage.disabled = true;
+            btnNextPage.disabled = true;
+            return;
+        }
+
+        // 1. Sort globalIncidents based on currentSort
+        globalIncidents.sort((a, b) => {
+            const timeA = a.timestamp ? a.timestamp.toMillis() : 0;
+            const timeB = b.timestamp ? b.timestamp.toMillis() : 0;
+            
+            if (currentSort === 'date_desc') return timeB - timeA;
+            if (currentSort === 'date_asc') return timeA - timeB;
+            if (currentSort === 'name_asc') {
+                const nameA = (a.classroom || '').toLowerCase();
+                const nameB = (b.classroom || '').toLowerCase();
+                return nameA.localeCompare(nameB);
+            }
+            if (currentSort === 'status_urgency') {
+                // Priority: Sin revisar (1) > En proceso (2) > Resuelta (3)
+                const getStatusPriority = (s) => {
+                    if (s === 'Sin revisar' || !s) return 1;
+                    if (s === 'En proceso') return 2;
+                    return 3;
+                };
+                const sa = getStatusPriority(a.status);
+                const sb = getStatusPriority(b.status);
+                if (sa !== sb) return sa - sb;
+                // If same status, fallback to newest
+                return timeB - timeA;
+            }
+            return timeB - timeA; // Default fallback
+        });
+
+        // 2. Pagination Math
+        let startIndex = 0;
+        let endIndex = globalIncidents.length;
+        let totalPages = 1;
+
+        if (itemsPerPage !== 'all') {
+            const perPage = parseInt(itemsPerPage);
+            totalPages = Math.ceil(globalIncidents.length / perPage);
+            // Ensure bounds
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            startIndex = (currentPage - 1) * perPage;
+            endIndex = Math.min(startIndex + perPage, globalIncidents.length);
+        }
+
+        // 3. Slice and Render
+        const pageIncidents = globalIncidents.slice(startIndex, endIndex);
+
+        pageIncidents.forEach((data) => {
+            // Format Date
+            let dateStr = "Unknown Date";
+            if (data.timestamp) {
+                const date = data.timestamp.toDate();
+                dateStr = date.toLocaleString();
+            }
+
+            // Format Category Tag
+            let tagClass = "tag-primary";
+            if (data.category === "Middle") tagClass = "tag-middle";
+            if (data.category === "High" || data.category === "Secondary") tagClass = "tag-secondary";
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${dateStr}</td>
+                <td><span class="tag ${tagClass}">${data.category || 'Unknown'}</span></td>
+                <td><strong>${data.classroom || 'N/A'}</strong><br><small>Urgency: ${data.urgency || 'Medium'}</small></td>
+                <td>${data.description}</td>
+                <td>
+                    ${data.imageUrl
+                    ? `<img src="${data.imageUrl}" alt="Photo" class="photo-thumb" data-full="${data.imageUrl}">`
+                    : `<span style="color: var(--text-secondary); font-style: italic;">No Photo</span>`}
+                </td>
+                <td>
+                    <select class="status-select" data-id="${data.id}" style="padding: 5px; border-radius: 4px;">
+                        <option value="Sin revisar" ${data.status === 'Sin revisar' || !data.status ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusUnreviewed : 'Sin revisar'}</option>
+                        <option value="En proceso" ${data.status === 'En proceso' ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusInProgress : 'En proceso'}</option>
+                        <option value="Resuelta" ${data.status === 'Resuelta' ? 'selected' : ''}>${dictionary && dictionary[currentLang] ? dictionary[currentLang].statusResolved : 'Resuelta'}</option>
+                    </select>
+                </td>
+                <td style="display: flex; gap: 5px;">
+                    <button class="btn-chat" data-id="${data.id}" title="Comments" style="padding: 5px 10px; background: var(--primary-color); border:none;  border-radius: 4px; color: white; cursor: pointer;">💬</button>
+                    <button class="btn-delete" data-id="${data.id}" title="Delete" style="padding: 5px 10px; background: #ff4d4d; border:none; border-radius: 4px; color: white; cursor: pointer;">🗑️</button>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+        });
+
+        // 4. Update UI Labels
+        if (itemsPerPage !== 'all') {
+            paginationInfo.textContent = `Mostrando ${startIndex + 1}-${endIndex} de ${globalIncidents.length}`;
+            pageIndicator.textContent = `Página ${currentPage} de ${totalPages}`;
+            btnPrevPage.disabled = currentPage === 1;
+            btnNextPage.disabled = currentPage === totalPages;
+            
+            // Visual style for disabled buttons
+            btnPrevPage.style.opacity = currentPage === 1 ? '0.5' : '1';
+            btnNextPage.style.opacity = currentPage === totalPages ? '0.5' : '1';
+        } else {
+            paginationInfo.textContent = `Mostrando las ${globalIncidents.length} incidencias`;
+            pageIndicator.textContent = `Página 1 de 1`;
+            btnPrevPage.disabled = true;
+            btnNextPage.disabled = true;
+            btnPrevPage.style.opacity = '0.5';
+            btnNextPage.style.opacity = '0.5';
+        }
+
+        attachDashboardEventListeners();
+    }
+
+    // --- UI EVENT LISTENERS FOR PAGINATION ---
+    itemsPerPageSelect.addEventListener('change', (e) => {
+        itemsPerPage = e.target.value;
+        currentPage = 1; // Reset to page 1 on resize
+        renderTable();
+    });
+
+    sortSelector.addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        currentPage = 1; // Reset to page 1 on resort
+        renderTable();
+    });
+
+    btnPrevPage.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+        }
+    });
+
+    btnNextPage.addEventListener('click', () => {
+        const perPage = parseInt(itemsPerPage);
+        if (isNaN(perPage)) return; // "all"
+        const totalPages = Math.ceil(globalIncidents.length / perPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderTable();
+        }
+    });
 
     function attachDashboardEventListeners() {
         // --- 1. Photos ---

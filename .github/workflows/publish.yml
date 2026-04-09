@@ -99,15 +99,32 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
       - run: npm install
-      - name: Build Android APK
+      - name: Build Public Android APK
         run: |
           npx cap sync android
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+          cd ..
+          mkdir -p out-android
+          cp android/app/build/outputs/apk/debug/app-debug.apk out-android/ISM-Public-Android.apk
+      - name: Build Admin Android APK
+        run: |
+          cp capacitor-admin.config.json capacitor.config.json
+          # Simple find-and-replace to change ApplicationID and App Name dynamically
+          sed -i 's/applicationId "com.ism.incidencias"/applicationId "com.ism.admin"/g' android/app/build.gradle
+          sed -i 's/<string name="app_name">ISM Incidencias<\/string>/<string name="app_name">ISM Admin<\/string>/g' android/app/src/main/res/values/strings.xml
+          npx cap sync android
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+          cd ..
+          cp android/app/build/outputs/apk/debug/app-debug.apk out-android/ISM-Admin-Android.apk
+          # Revert back changes for OTA matching just in case
+          git checkout android/app/build.gradle
+          git checkout android/app/src/main/res/values/strings.xml
       - name: Prepare Android OTA Zip
         run: |
-          mkdir out-android
           sudo apt-get install zip -y
           cd www
           zip -r ../out-android/www.zip ./*
@@ -117,7 +134,8 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            android/app/build/outputs/apk/debug/app-debug.apk
+            out-android/ISM-Public-Android.apk
+            out-android/ISM-Admin-Android.apk
             out-android/www.zip
           draft: false
           prerelease: false

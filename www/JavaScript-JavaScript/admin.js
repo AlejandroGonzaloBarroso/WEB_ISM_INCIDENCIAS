@@ -610,10 +610,21 @@ document.addEventListener('DOMContentLoaded', () => {
             tableBody.appendChild(tr);
         });
 
+        // Dictionary Access
+        const t = (dictionary && dictionary[currentLang]) ? dictionary[currentLang] : null;
+        const txtShowing = t ? t.showingText : 'Mostrando';
+        const txtOf = t ? t.ofText : 'de';
+        const txtPage = t ? t.pageText : 'Página';
+        const txtAll = t ? t.allIncidentsText : 'Mostrando las';
+        const txtIncidents = t ? (currentLang==='en'?'incidents':'incidencias') : 'incidencias';
+        
+        btnPrevPage.textContent = t ? t.prevBtn : "← Anterior";
+        btnNextPage.textContent = t ? t.nextBtn : "Siguiente →";
+
         // 4. Update UI Labels
         if (itemsPerPage !== 'all') {
-            paginationInfo.textContent = `Mostrando ${startIndex + 1}-${endIndex} de ${globalIncidents.length}`;
-            pageIndicator.textContent = `Página ${currentPage} de ${totalPages}`;
+            paginationInfo.textContent = `${txtShowing} ${startIndex + 1}-${endIndex} ${txtOf} ${globalIncidents.length}`;
+            pageIndicator.textContent = `${txtPage} ${currentPage} ${txtOf} ${totalPages}`;
             btnPrevPage.disabled = currentPage === 1;
             btnNextPage.disabled = currentPage === totalPages;
             
@@ -621,8 +632,8 @@ document.addEventListener('DOMContentLoaded', () => {
             btnPrevPage.style.opacity = currentPage === 1 ? '0.5' : '1';
             btnNextPage.style.opacity = currentPage === totalPages ? '0.5' : '1';
         } else {
-            paginationInfo.textContent = `Mostrando las ${globalIncidents.length} incidencias`;
-            pageIndicator.textContent = `Página 1 de 1`;
+            paginationInfo.textContent = `${txtAll} ${globalIncidents.length} ${txtIncidents}`;
+            pageIndicator.textContent = `${txtPage} 1 ${txtOf} 1`;
             btnPrevPage.disabled = true;
             btnNextPage.disabled = true;
             btnPrevPage.style.opacity = '0.5';
@@ -1100,6 +1111,11 @@ document.addEventListener('DOMContentLoaded', () => {
             headStatus.options[1].text = t.statusVacation;
             headStatus.options[2].text = t.statusDayOff;
             headStatus.options[3].text = t.statusSick;
+        }
+
+        // Re-render table to translate Javascript dynamic labels
+        if (typeof renderTable === 'function') {
+            renderTable();
         }
 
         // Update theme button

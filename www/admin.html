@@ -96,22 +96,22 @@
         <!-- Pagination & Sorting Controls -->
         <div class="table-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
             <div style="display: flex; gap: 10px; align-items: center;">
-                <label for="itemsPerPage" style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;">Ver:</label>
+                <label for="itemsPerPage" style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;" data-i18n="viewLabel">Ver:</label>
                 <select id="itemsPerPage" style="padding: 5px 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">
                     <option value="10" selected>10</option>
                     <option value="20">20</option>
                     <option value="50">50</option>
-                    <option value="all">Todas</option>
+                    <option value="all" data-i18n="allLabel">Todas</option>
                 </select>
             </div>
             
             <div style="display: flex; gap: 10px; align-items: center;">
-                <label for="sortSelector" style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;">Ordenar por:</label>
+                <label for="sortSelector" style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;" data-i18n="sortByLabel">Ordenar por:</label>
                 <select id="sortSelector" style="padding: 5px 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">
-                    <option value="date_desc" selected>Fecha creación (Más reciente)</option>
-                    <option value="date_asc">Fecha creación (Más antigua)</option>
-                    <option value="status_urgency">Estado (Requiere atención primero)</option>
-                    <option value="name_asc">Aula / Nombre (A-Z)</option>
+                    <option value="date_desc" selected data-i18n="sortDateDesc">Fecha creación (Más reciente)</option>
+                    <option value="date_asc" data-i18n="sortDateAsc">Fecha creación (Más antigua)</option>
+                    <option value="status_urgency" data-i18n="sortStatus">Estado (Requiere atención primero)</option>
+                    <option value="name_asc" data-i18n="sortName">Aula / Nombre (A-Z)</option>
                 </select>
             </div>
         </div>

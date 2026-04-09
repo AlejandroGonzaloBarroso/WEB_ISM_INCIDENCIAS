@@ -61,7 +61,20 @@
         "checkInDesc": "Have you started working today?",
         "checkInBtn": "Yes, I'm working",
         "checkInOther": "Other status",
-        "toastStatusSaved": "Status updated for today"
+        "toastStatusSaved": "Status updated for today",
+        "viewLabel": "View:",
+        "allLabel": "All",
+        "sortByLabel": "Sort by:",
+        "sortDateDesc": "Creation Date (Newest)",
+        "sortDateAsc": "Creation Date (Oldest)",
+        "sortStatus": "Status (Needs attention first)",
+        "sortName": "Classroom / Name (A-Z)",
+        "prevBtn": "← Previous",
+        "nextBtn": "Next →",
+        "showingText": "Showing",
+        "ofText": "of",
+        "pageText": "Page",
+        "allIncidentsText": "Showing all"
     },
     "es": {
         "pageTitle": "Panel Admin ISM",
@@ -125,6 +138,19 @@
         "checkInDesc": "¿Has venido a trabajar hoy?",
         "checkInBtn": "Sí, estoy trabajando",
         "checkInOther": "Otro estado",
-        "toastStatusSaved": "Estado actualizado por hoy"
+        "toastStatusSaved": "Estado actualizado por hoy",
+        "viewLabel": "Ver:",
+        "allLabel": "Todas",
+        "sortByLabel": "Ordenar por:",
+        "sortDateDesc": "Fecha creación (Más reciente)",
+        "sortDateAsc": "Fecha creación (Más antigua)",
+        "sortStatus": "Estado (Requiere atención primero)",
+        "sortName": "Aula / Nombre (A-Z)",
+        "prevBtn": "← Anterior",
+        "nextBtn": "Siguiente →",
+        "showingText": "Mostrando",
+        "ofText": "de",
+        "pageText": "Página",
+        "allIncidentsText": "Mostrando las"
     }
 }

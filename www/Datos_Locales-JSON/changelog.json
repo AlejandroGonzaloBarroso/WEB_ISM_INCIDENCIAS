@@ -1,16 +1,18 @@
 {
-  "1.0.13": {
+  "2.0.0": {
     "es": [
-      "¡NUEVO! Paginación inteligente: Selecciona cuántas incidencias ver por página (10, 20, 50).",
-      "¡NUEVO! Filtros avanzados: Ordena las tablas por Fecha, Prioridad de Estado o Alfabéticamente de forma ultrarrápida.",
-      "Aceleración matemática en el panel de administrador y reducción de la carga en los servidores.",
-      "Mejora estructural del Dashboard."
+      "🎉 ¡LANZAMIENTO VERSIÓN 2.0!",
+      "Lanzamiento de Aplicaciones Dedicadas: Se han separado los motores nativos entre ISM Public (Profesores) e ISM Admin (Supervisores).",
+      "Paginación en memoria: Navega por listados de cientos de incidencias a coste cero de servidor.",
+      "Filtros de Ordenación: Jerarquía automática por gravedades de estado, nivel alfabético y antigüedades.",
+      "Traducción Autónoma Bilingüe conectada a la base de componentes globales."
     ],
     "en": [
-      "NEW! Smart Pagination: Select how many incidents to view per page (10, 20, 50).",
-      "NEW! Advanced Sorting: Sort tables by Date, Status Priority, or Alphabetically lightning fast.",
-      "Mathematical acceleration in the admin panel and server load reduction.",
-      "Structural improvement of the Dashboard."
+      "🎉 VERSION 2.0 RELEASE!",
+      "Dedicated App Launch: Native engines have been split between ISM Public (Teachers) and ISM Admin (Supervisors).",
+      "In-Memory Pagination: Browse through hundreds of incident listings at zero server cost.",
+      "Sorting Filters: Automatic hierarchy by status severity, alphabetical level, and age.",
+      "Autonomous Bilingual Translation linked to the global component base."
     ]
   },
   "1.0.8": {

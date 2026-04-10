@@ -22,7 +22,9 @@ El instalador de Windows viene pre-empaquetado y configurado para actualizarse a
 Nuestro paquete Android es un `.apk` puro firmado localmente.
 
 1. Abre el navegador web desde tu propio móvil Android y ve a la página de [descargas en GitHub](https://github.com/AlejandroGonzaloBarroso/WEB_ISM_INCIDENCIAS/releases/latest).
-2. Haz clic en descargar sobre el archivo que sea **`app-debug.apk`** o termine en `.apk`.
+2. Verás dos versiones disponibles. Toca para descargar la que necesites:
+   - **`ISM-Public-Android.apk`**: Instala este si eres Profesor/Personal (para mandar incidencias).
+   - **`ISM-Admin-Android.apk`**: Instala este si eres el Administrador o Informático (para gestionar todo desde el móvil).
 3. Tu navegador puede lanzar un aviso diciendo "*Este tipo de archivo puede dañar tu dispositivo*". Es una advertencia genérica de Android, dale a **Descargar de todos modos**.
 4. Abre el archivo descargado. 
 5. Si nunca has instalado una app desde tu navegador, Android te pedirá permisos. Haz clic en *Ajustes* y activa la casilla **"Permitir instalar aplicaciones de esta fuente / orígenes desconocidos"**.

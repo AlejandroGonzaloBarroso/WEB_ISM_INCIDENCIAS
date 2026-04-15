@@ -537,6 +537,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 return nameA.localeCompare(nameB);
             }
             if (currentSort === 'status_urgency') {
+                // Priority: High (1) > Medium (2) > Low (3)
+                const getUrgencyPriority = (u) => {
+                    if (u === 'High') return 1;
+                    if (u === 'Medium') return 2;
+                    if (u === 'Low') return 3;
+                    return 2; // Default to Medium if undefined
+                };
+                const ua = getUrgencyPriority(a.urgency);
+                const ub = getUrgencyPriority(b.urgency);
+                if (ua !== ub) return ua - ub;
+                return timeB - timeA;
+            }
+            if (currentSort === 'status_name') {
                 // Priority: Sin revisar (1) > En proceso (2) > Resuelta (3)
                 const getStatusPriority = (s) => {
                     if (s === 'Sin revisar' || !s) return 1;
@@ -546,13 +559,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sa = getStatusPriority(a.status);
                 const sb = getStatusPriority(b.status);
                 if (sa !== sb) return sa - sb;
-                // If same status, fallback to newest
-                return timeB - timeA;
-            }
-            if (currentSort === 'status_name') {
-                const statusA = (a.status || 'Sin revisar').toLowerCase();
-                const statusB = (b.status || 'Sin revisar').toLowerCase();
-                if (statusA !== statusB) return statusA.localeCompare(statusB);
                 return timeB - timeA;
             }
             return timeB - timeA; // Default fallback

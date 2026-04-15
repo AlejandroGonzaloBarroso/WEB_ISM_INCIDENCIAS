@@ -1,6 +1,6 @@
 {
   "name": "web_ism_incidencias",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Sistema de gestión de incidencias para ISM School",
   "main": "electron-main.js",
   "scripts": {

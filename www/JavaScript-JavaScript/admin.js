@@ -549,6 +549,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // If same status, fallback to newest
                 return timeB - timeA;
             }
+            if (currentSort === 'status_name') {
+                const statusA = (a.status || 'Sin revisar').toLowerCase();
+                const statusB = (b.status || 'Sin revisar').toLowerCase();
+                if (statusA !== statusB) return statusA.localeCompare(statusB);
+                return timeB - timeA;
+            }
             return timeB - timeA; // Default fallback
         });
 

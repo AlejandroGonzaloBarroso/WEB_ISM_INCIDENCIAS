@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog } = require('electron');
 const path = require('path');const express = require('express');
 const expressApp = express();
 
@@ -44,13 +44,35 @@ app.whenReady().then(async () => {
     try {
       const { autoUpdater } = require('electron-updater');
       
-      // When an update is downloaded, instantly install it and restart
-      autoUpdater.on('update-downloaded', (info) => {
-        // quitAndInstall(isSilent, isForceRunAfter)
-        autoUpdater.quitAndInstall(true, true);
+      // Catch and log auto-updater errors
+      autoUpdater.on('error', (err) => {
+        console.error('Error in auto-updater:', err);
       });
 
+      // Prompt the user when update is downloaded instead of force quit
+      autoUpdater.on('update-downloaded', (info) => {
+        dialog.showMessageBox({
+          type: 'info',
+          buttons: ['Reiniciar ahora', 'Más tarde'],
+          title: 'Actualización disponible',
+          message: 'Se ha descargado una nueva versión de la aplicación.',
+          detail: '¿Deseas reiniciar la aplicación ahora para instalar la actualización?'
+        }).then((returnValue) => {
+          if (returnValue.response === 0) {
+            // User clicked 'Reiniciar ahora'
+            autoUpdater.quitAndInstall();
+          }
+        });
+      });
+
+      // Initial update check
       autoUpdater.checkForUpdatesAndNotify();
+
+      // Periodic check every 4 hours (4 * 60 * 60 * 1000)
+      setInterval(() => {
+        autoUpdater.checkForUpdatesAndNotify();
+      }, 14400000);
+
     } catch (err) {
       console.error("AutoUpdater error:", err);
     }

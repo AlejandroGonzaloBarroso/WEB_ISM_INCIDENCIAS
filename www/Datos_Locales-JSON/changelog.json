@@ -1,4 +1,16 @@
 {
+  "2.0.4": {
+    "es": [
+      "✨ Rediseño Visual Premium: El panel de administración ha sido renovado con estética glassmorphism y elementos flotantes.",
+      "Mejoras en legibilidad: Nueva tipografía moderna en las tablas.",
+      "Optimización: Simplificación visual de filtrados y rediseño interactivo en etiquetas de estado."
+    ],
+    "en": [
+      "✨ Premium Visual Redesign: The admin dashboard has been revamped with a glassmorphism aesthetic and floating elements.",
+      "Readability improvements: Clean hierarchy and modern typography in data tables.",
+      "Control optimization: Visual simplification of filters and interactive status labels."
+    ]
+  },
   "2.0.0": {
     "es": [
       "🎉 ¡LANZAMIENTO VERSIÓN 2.0!",

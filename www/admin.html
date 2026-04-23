@@ -94,10 +94,10 @@
         </div>
 
         <!-- Pagination & Sorting Controls -->
-        <div class="table-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <label for="itemsPerPage" style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;" data-i18n="viewLabel">Ver:</label>
-                <select id="itemsPerPage" style="padding: 5px 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">
+        <div class="table-controls">
+            <div class="control-group">
+                <label for="itemsPerPage" data-i18n="viewLabel">Ver:</label>
+                <select id="itemsPerPage" class="custom-select">
                     <option value="10" selected>10</option>
                     <option value="20">20</option>
                     <option value="50">50</option>
@@ -105,9 +105,9 @@
                 </select>
             </div>
             
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <label for="sortSelector" style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 600;" data-i18n="sortByLabel">Ordenar por:</label>
-                <select id="sortSelector" style="padding: 5px 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">
+            <div class="control-group">
+                <label for="sortSelector" data-i18n="sortByLabel">Ordenar por:</label>
+                <select id="sortSelector" class="custom-select">
                     <option value="date_desc" selected data-i18n="sortDateDesc">Fecha creación (Más reciente)</option>
                     <option value="date_asc" data-i18n="sortDateAsc">Fecha creación (Más antigua)</option>
                     <option value="status_urgency" data-i18n="sortStatus">Urgencia (Mayor a menor)</option>
@@ -137,12 +137,12 @@
         </div>
 
         <!-- Bottom Pagination Controls -->
-        <div class="pagination-bottom" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 10px 15px; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color);">
-            <span id="paginationInfo" style="color: var(--text-secondary); font-size: 0.9rem;">Mostrando 0-0 de 0</span>
-            <div style="display: flex; gap: 10px;">
-                <button id="btnPrevPage" class="btn-theme" style="padding: 5px 15px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">&#8592; Anterior</button>
-                <span id="pageIndicator" style="display: flex; align-items: center; font-weight: bold; color: var(--primary-color);">Página 1</span>
-                <button id="btnNextPage" class="btn-theme" style="padding: 5px 15px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); cursor: pointer;">Siguiente &#8594;</button>
+        <div class="pagination-bottom">
+            <span id="paginationInfo" class="pagination-info">Mostrando 0-0 de 0</span>
+            <div class="pagination-actions">
+                <button id="btnPrevPage" class="btn-pagination">&#8592; Anterior</button>
+                <span id="pageIndicator" class="page-indicator">Página 1</span>
+                <button id="btnNextPage" class="btn-pagination">Siguiente &#8594;</button>
             </div>
         </div>
     </main>

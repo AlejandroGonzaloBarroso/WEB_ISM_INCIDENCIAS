@@ -70,67 +70,241 @@
 }
 
 
+/* Controls & Pagination Premium Styling */
+.table-controls, .pagination-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+html.dark-mode .table-controls, html.dark-mode .pagination-bottom {
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.table-controls:hover, .pagination-bottom:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    border-color: var(--primary-color);
+}
+
+html.dark-mode .table-controls:hover, html.dark-mode .pagination-bottom:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.control-group label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.custom-select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.custom-select:hover, .custom-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(26, 75, 140, 0.1);
+    outline: none;
+}
+
+.pagination-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.pagination-info {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.page-indicator {
+    display: flex;
+    align-items: center;
+    font-weight: 800;
+    color: var(--primary-color);
+    background: rgba(26, 75, 140, 0.1);
+    padding: 5px 12px;
+    border-radius: 6px;
+}
+
+html.dark-mode .page-indicator {
+    background: rgba(174, 203, 245, 0.1);
+    color: #AECBF5;
+}
+
+.btn-pagination {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    font-family: var(--font-body);
+}
+
+.btn-pagination:hover {
+    background: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(26, 75, 140, 0.2);
+}
+
+html.dark-mode .btn-pagination:hover {
+    background: var(--primary-hover);
+    color: #050a14;
+    border-color: var(--primary-hover);
+    box-shadow: 0 4px 10px rgba(174, 203, 245, 0.2);
+}
+
+/* Premium Table Styling */
 .table-responsive {
     width: 100%;
     overflow-x: auto;
-    background-color: var(--card-bg);
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+html.dark-mode .table-responsive {
+    background: rgba(17, 24, 39, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
 }
 
 .incidents-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     text-align: left;
 }
 
 .incidents-table th,
 .incidents-table td {
-    padding: 1rem;
+    padding: 1.2rem 1rem;
     border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
 }
 
 .incidents-table th {
     background-color: var(--primary-color);
     color: var(--btn-text);
-    font-family: 'Times New Roman', Times, serif;
+    font-family: var(--font-body);
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05rem;
+    letter-spacing: 0.1em;
+    font-size: 0.85rem;
+    border-bottom: none;
 }
 
-.incidents-table tr:hover {
-    background-color: rgba(0, 0, 0, 0.02);
+.incidents-table th:first-child {
+    border-top-left-radius: 12px;
+}
+.incidents-table th:last-child {
+    border-top-right-radius: 12px;
+}
+
+.incidents-table td:last-child {
+    border-right: none;
+}
+.incidents-table tr:last-child td {
+    border-bottom: none;
+}
+
+.incidents-table tr {
+    transition: all 0.2s ease;
+}
+
+.incidents-table tr:hover td {
+    background-color: var(--bg-color); /* Slight highlight */
 }
 
 /* For Dark mode inherit */
-html.dark-mode .incidents-table tr:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+html.dark-mode .incidents-table tr:hover td {
+    background-color: rgba(255, 255, 255, 0.03);
 }
 
+/* Modern Pill Tags */
 .tag {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .tag-primary {
-    background-color: #f59e0b;
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #d97706; /* Darker amber for text */
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+html.dark-mode .tag-primary {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #fbbf24; 
+    border: 1px solid rgba(245, 158, 11, 0.5);
 }
 
-/* Amber */
+/* Amber/Orange */
 .tag-middle {
-    background-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #2563eb;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+html.dark-mode .tag-middle {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.5);
 }
 
 /* Blue */
 .tag-secondary {
-    background-color: #10b981;
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.4);
 }
-
+html.dark-mode .tag-secondary {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.5);
+}
 /* Green */
 
 .photo-thumb {

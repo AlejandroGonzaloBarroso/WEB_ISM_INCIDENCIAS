@@ -113,7 +113,11 @@ jobs:
           cp capacitor-admin.config.json capacitor.config.json
           # Simple find-and-replace to change ApplicationID and App Name dynamically
           sed -i 's/applicationId "com.ism.incidencias"/applicationId "com.ism.admin"/g' android/app/build.gradle
+          sed -i 's/namespace = "com.ism.incidencias"/namespace = "com.ism.admin"/g' android/app/build.gradle
           sed -i 's/<string name="app_name">ISM Incidencias<\/string>/<string name="app_name">ISM Admin<\/string>/g' android/app/src/main/res/values/strings.xml
+          # Make admin.html the entry point for Capacitor
+          mv www/index.html www/index-backup.html
+          cp www/admin.html www/index.html
           npx cap sync android
           cd android
           chmod +x gradlew
@@ -121,6 +125,7 @@ jobs:
           cd ..
           cp android/app/build/outputs/apk/debug/app-debug.apk out-android/ISM-Admin-Android.apk
           # Revert back changes for OTA matching just in case
+          mv www/index-backup.html www/index.html
           git checkout android/app/build.gradle
           git checkout android/app/src/main/res/values/strings.xml
       - name: Prepare Android OTA Zip

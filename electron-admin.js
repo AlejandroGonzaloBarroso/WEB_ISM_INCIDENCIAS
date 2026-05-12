@@ -1,5 +1,6 @@
 const { app, BrowserWindow, dialog } = require('electron');
-const path = require('path');const express = require('express');
+const path = require('path');
+const express = require('express');
 const expressApp = express();
 
 // Start Express server with a dynamic port
